@@ -1,0 +1,5 @@
+pandoc
+sphinx-git
+sphinxcontrib-programoutput
+sphinxcontrib-needs
+tut
