@@ -23,8 +23,8 @@ from recommonmark.parser import CommonMarkParser
 # -- Project information -----------------------------------------------------
 
 project = 'Fantasy'
-copyright = '2018, WANG WENPEI'
-author = 'WANG WENPEI'
+copyright = '2018, 风爻'
+author = '风爻'
 
 # The short X.Y version
 version = '0.x'
