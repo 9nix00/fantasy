@@ -16,6 +16,9 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
+from recommonmark.transform import AutoStructify
+from recommonmark.parser import CommonMarkParser
+
 
 # -- Project information -----------------------------------------------------
 
@@ -62,6 +65,10 @@ templates_path = ['_templates']
 #
 source_suffix = ['.rst', '.md']
 
+source_parsers = {
+    '.md': CommonMarkParser,
+}
+
 # The master toctree document.
 master_doc = 'index'
 
@@ -100,7 +107,6 @@ html_theme_options = {
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
-
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.
@@ -180,3 +186,11 @@ todo_include_todos = True
 
 
 
+
+# At the bottom of conf.py
+def setup(app):
+    app.add_config_value('recommonmark_config', {
+        'enable_auto_toc_tree': True,
+        # 'auto_toc_tree_section': 'Contents',
+    }, True)
+    app.add_transform(AutoStructify)

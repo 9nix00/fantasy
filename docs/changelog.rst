@@ -7,16 +7,8 @@ Preview
     :rev-list: master..beta
     :filename_filter: fantasy/.*\.py
 
-
-Version 0.2
+Version 0.x
 -----------------
 .. git_changelog::
-    :rev-list: v0.2.0..HEAD
+    :rev-list: HEAD
     :filename_filter: fantasy/.*\.py
-
-Version 0.1
------------------
-.. git_changelog::
-    :rev-list: v0.2.0
-    :filename_filter: fantasy/.*\.py
-
