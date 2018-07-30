@@ -19,8 +19,8 @@ import os
 
 from flask import Flask
 
-version = "0.2.5"
-version_info = (0, 2, 5)
+version = "0.2.6"
+version_info = version.split('.')
 
 os.environ.setdefault('FANTASY_ACTIVE_DB', 'yes')
 os.environ.setdefault('FANTASY_ACTIVE_CACHE', 'yes')
@@ -137,7 +137,9 @@ def load_tasks(app, entry_file=None):
                              'tasks.txt')
 
     if not os.path.exists(tasks_txt):
-        raise IOError('Tasks file not found:%s' % tasks_txt)
+        import sys
+        print('Tasks file not found:%s' % tasks_txt)
+        sys.exit(-1)
 
     class ContextTask(Task):
         abstract = True

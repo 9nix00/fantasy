@@ -1,6 +1,0 @@
-pytest-pep8
-pytest-cov
-# pytest-capturelog # 太老了有deprecated输出
-pytest-instafail
-fudge
-pytest-mock

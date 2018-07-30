@@ -1,4 +1,4 @@
-python-dateutil
+# python-dateutil
 xmltodict
 dicttoxml
 gunicorn
@@ -10,9 +10,8 @@ celery
 webargs
 mongoengine
 pymysql
-sqlalchemy-utils
+https://github.com/wangwenpei/sqlalchemy-utils/archive/master.zip
 flask
-flask-fantasy
 flask-sqlalchemy
 flask-caching
 flask-migrate

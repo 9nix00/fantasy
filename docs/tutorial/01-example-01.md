@@ -1,9 +1,9 @@
-一个简单的案例
+快速开始[撰写中]
 =============
 
-一个简单的案例
-
+我们提供了一个演示仓库
 
 ```
-pip install flask-fatasy
+git clone  git@github.com:wangwenpei/flask-kickstart.git 
+
 ```

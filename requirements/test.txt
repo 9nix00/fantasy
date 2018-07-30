@@ -1,0 +1,5 @@
+fudge
+pytest-pep8
+pytest-cov
+pytest-instafail
+pytest-mock

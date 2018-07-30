@@ -1,22 +1,6 @@
-import os
-
 from setuptools import find_packages, setup
 
-
-def get_version(version_tuple):
-    """Return the version tuple as a string, e.g. for (0, 10, 7),
-    return '0.10.7'.
-    """
-    return '.'.join(map(str, version_tuple))
-
-
-# Dirty hack to get version number from fantasy/__init__.py - we
-# can't import it as it depends on Flask and Flask isn't installed until
-# user explicit install it. this idea is inspiring from flask-mongoengine
-init = os.path.join(os.path.dirname(__file__), 'fantasy', '__init__.py')
-version_line = list(filter(lambda l: l.startswith('version_info ='),
-                           open(init)))[0]
-version = get_version(eval(version_line.split('=')[-1]))
+version = "0.2.6"
 
 setup(
     name='flask-fantasy',
