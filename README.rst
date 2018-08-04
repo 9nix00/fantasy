@@ -31,3 +31,20 @@ Flask最大的价值在于，基于 **microframework** 的设计使得我们在�
 .. _Fantasy: https://github.com/wangwenpei/fantasy
 .. _Flask: http://flask.pocoo.org/
 .. _Django: https://www.djangoproject.com/
+
+
+
+可能重构的功能点
+--------------------
+
+- pytest-hive 考虑独立为标准的pytest插件
+
+
+
+.. |build-status| image:: https://secure.travis-ci.org/wangwenpei/fantasy.png?branch=master
+    :alt: Build status
+    :target: https://travis-ci.org/wangwenpei/fantasy
+
+.. |coverage| image:: https://codecov.io/github/wangwenpei/fantasy/coverage.svg?branch=master
+    :target: https://codecov.io/github/wangwenpei/fantasy?branch=master
+
