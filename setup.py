@@ -12,7 +12,7 @@ setup(
     author='WANG WENPEI',
     zip_safe=False,
     test_suite="tests",
-    author_email='wangwenpei@nextoa.com',
+    author_email='stormxx@1024.engineer',
     description='A bootstrap tool for Flask APP',
     keywords='fantasy,flask',
 )
