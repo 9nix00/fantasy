@@ -7,16 +7,15 @@ python:
   - "3.6"
   - "3.6-dev"
 #  - "3.7-dev"  # mongoengine not support yet
-#  - "nightly" # currently points to 3.6-dev
+#  - "nightly"
   - "pypy3"
 # command to install dependencies
 install:
   - "pip install -r requirements.txt"
   - "pip install -r requirements/test.txt"
-  - "pip install codecov"
 # command to run tests
 script:
   - "flake8 fantasy"
   - "python setup.py test && pytest --cov=./"
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
+  - "codecov"
