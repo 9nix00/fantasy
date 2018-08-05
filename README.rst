@@ -1,6 +1,9 @@
 Fantasy
 ========
 
+|build-status| |coverage|
+
+
 Flask 应用框架。
 
 Fantasy 设计思路
