@@ -16,6 +16,7 @@ install:
 # command to run tests
 script:
   - "flake8 fantasy"
-  - "python setup.py test && pytest --cov=./"
+#  - "python setup.py test"
+  - "pytest --cov=./"
 after_success:
   - "codecov"
