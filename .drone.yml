@@ -5,7 +5,7 @@ pipeline:
     daemon_off: true
     volumes:
      - /var/run/docker.sock:/var/run/docker.sock
-     - /root/.docker/config.json:/root/.docker/config.json
+#     - /root/.docker/config.json:/root/.docker/config.json
     tags:
       - ${DRONE_COMMIT_BRANCH/master/latest}
       - ${DRONE_COMMIT_BRANCH}
