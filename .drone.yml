@@ -1,0 +1,17 @@
+pipeline:
+  publish:
+    image: plugins/docker
+    repo: wangwenpei/fantasy
+    daemon_off: true
+    volumes:
+     - /var/run/docker.sock:/var/run/docker.sock
+     - /root/.docker/config.json:/root/.docker/config.json
+    tags:
+      - ${DRONE_COMMIT_BRANCH/master/latest}
+      - ${DRONE_COMMIT_BRANCH}
+      - ${DRONE_COMMIT_BRANCH}-${DRONE_COMMIT_SHA:8:6}
+      - ${DRONE_COMMIT_SHA:8:6}
+    when:
+      branch: [master,beta,dev]
+      event: [ push, tag ]
+      local: false
