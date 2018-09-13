@@ -114,10 +114,15 @@ def migrate(migrations_root):
 @click.option('--work-dir', type=click.Path(exists=False))
 @click.option('--hive-root', type=click.Path(exists=True),
               default=os.path.expanduser('~/Codes/1024/hive/'))
+@click.option('--with-requirements/--without-requirements', default=False)
+@click.option('--with-dockerfile/--without-dockerfile', default=False)
 @click.option('--active-module', '-a',
               multiple=True, help='load order will effect generate file')
+@click.option('--active-module-file', '-A',
+              type=click.Path(exists=True))
 @with_appcontext
-def requirements(work_dir, hive_root, active_module):
+def requirements(work_dir, hive_root, with_requirements,
+                 with_dockerfile, active_module, active_module_file):
     """编译全新依赖文件"""
     import sys
     sys.path.insert(0, hive_root)
@@ -135,12 +140,24 @@ def requirements(work_dir, hive_root, active_module):
 
     # active_modules 严格按照顺序
     active_module_paths = []
-    for m in active_module:
+    active_module_list = []
+
+    if active_module_file:
+        with open(active_module_file, 'r') as fp:
+            for l in fp:
+                pkg = l.split('#')[0].strip()
+                if pkg:
+                    active_module_list.append(l.strip("\n"))
+            pass
+
+    active_module_list += active_module
+
+    for m in active_module_list:
         try:
             mod = importlib.import_module(m)
             active_module_paths.append(os.path.dirname(mod.__file__))
         except ImportError:
-            click.echo('module "%s" not found.' % m, fg="yellow")
+            click.echo('module "%s" not found.' % m, color="yellow")
             pass
         pass
 
@@ -233,10 +250,19 @@ def requirements(work_dir, hive_root, active_module):
         models_pairs = filter(
             lambda pair: os.path.exists(pair[0]),
             map(lambda x: (os.path.join(x[0], 'models.py'), x[1]),
-                [(v, active_module[i]) for i, v in
+                [(v, active_module_list[i]) for i, v in
                  enumerate(active_module_paths)]))
 
-        _, models = zip(*models_pairs)
+        try:
+            _, models = zip(*models_pairs)
+        except ValueError:
+            click.echo(click.style("No models found,"
+                                   "is it include in "
+                                   "your PYTHONPATH?\n"
+                                   "Modules: %s" %
+                                   ','.join(active_module_list),
+                                   fg="yellow"))
+            return
 
         click.echo(click.style("Found models.txt,try update...",
                                fg="yellow"))
@@ -251,10 +277,19 @@ def requirements(work_dir, hive_root, active_module):
         tasks_pairs = filter(
             lambda pair: os.path.exists(pair[0]),
             map(lambda x: (os.path.join(x[0], 'tasks.py'), x[1]),
-                [(v, active_module[i]) for i, v in
+                [(v, active_module_list[i]) for i, v in
                  enumerate(active_module_paths)]))
 
-        _, tasks = zip(*tasks_pairs)
+        try:
+            _, tasks = zip(*tasks_pairs)
+        except ValueError:
+            click.echo(click.style("No tasks found,"
+                                   "is it include in "
+                                   "your PYTHONPATH?\n"
+                                   "Modules: %s" %
+                                   ','.join(active_module_list),
+                                   fg="yellow"))
+            return
 
         click.echo(click.style("Found tasks.txt,try update...",
                                fg="yellow"))
@@ -263,9 +298,11 @@ def requirements(work_dir, hive_root, active_module):
                 fp.write("%s\n" % p)
         pass
 
-    build_requirements()
+    if with_requirements:
+        build_requirements()
 
-    build_dockerfile()
+    if with_dockerfile:
+        build_dockerfile()
 
     if os.path.exists(migrate_root):
         build_migrations()
