@@ -12,6 +12,6 @@ pipeline:
       - ${DRONE_COMMIT_BRANCH}-${DRONE_COMMIT_SHA:8:6}
       - ${DRONE_COMMIT_SHA:8:6}
     when:
-      branch: [master,beta,dev]
+      branch: [master,beta]
       event: [ push, tag ]
       local: false
