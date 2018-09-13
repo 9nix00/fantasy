@@ -3,10 +3,9 @@ pipeline:
     image: plugins/docker
     repo: docker.io/wangwenpei/fantasy
     daemon_off: true
-   secrets: [ docker_username , docker_password ]
+    secrets: [ docker_username , docker_password ]
     volumes:
      - /var/run/docker.sock:/var/run/docker.sock
-#     - /root/.docker/config.json:/root/.docker/config.json
     tags:
       - ${DRONE_COMMIT_BRANCH/master/latest}
       - ${DRONE_COMMIT_BRANCH}
