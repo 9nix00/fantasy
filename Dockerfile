@@ -27,7 +27,7 @@ ENV FLASK_REDIS_URL=redis://redis:6379/0
 ENV FLASK_MONGODB_DB=fantasy
 ENV FLASK_MONGODB_HOST=mongodb
 
-ENV SQLALCHEMY_DATABASE_URI=mysql+pymysql://root:root@mysql:3306/fantasy?charset=utf8mb4
+#ENV SQLALCHEMY_DATABASE_URI=mysql+pymysql://root:root@mysql:3306/fantasy?charset=utf8mb4
 ENV SQLALCHEMY_TRACK_MODIFICATIONS=yes
 
 ENV CELERY_TASK_SERIALIZER=json
