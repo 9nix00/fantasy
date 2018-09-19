@@ -244,8 +244,6 @@ def create_app(app_name, config={}, db=None, celery=None):
             run_app(app)
             pass
 
-        print('ooooooooooooooooooooooooooo',active_db)
-
         if active_db and app.db:
             smart_database(app)
             smart_migrate(app, migrations_root)
