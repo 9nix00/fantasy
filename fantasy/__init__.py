@@ -187,6 +187,7 @@ def create_app(app_name, config={}, db=None, celery=None):
     """
 
     # smart_logging()
+    active_db = os.environ['FANTASY_ACTIVE_DB'] == 'yes'
 
     from webargs.flaskparser import parser
     from . import error_handler, hacker, cli
@@ -243,7 +244,9 @@ def create_app(app_name, config={}, db=None, celery=None):
             run_app(app)
             pass
 
-        if app.db:
+        print('ooooooooooooooooooooooooooo',active_db)
+
+        if active_db and app.db:
             smart_database(app)
             smart_migrate(app, migrations_root)
             smart_account(app)
