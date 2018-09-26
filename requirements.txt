@@ -10,6 +10,9 @@ celery
 webargs
 mongoengine
 pymysql
+cryptography
+bcrypt
+pycrypto
 sqlalchemy-utils
 flask
 flask-sqlalchemy
