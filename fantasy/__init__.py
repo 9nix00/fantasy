@@ -252,10 +252,9 @@ def create_app(app_name, config={}, db=None, celery=None):
 
             @app.teardown_request
             def session_clear(exception=None):
-                app.db.session.remove()
                 if exception and app.db.session.is_active:
                     app.db.session.rollback()
-
+                    app.db.session.remove()
             pass
 
         # 添加错误控制
