@@ -275,7 +275,19 @@ def create_app(app_name, config={}, db=None, celery=None):
 
         if hasattr(mod, 'run_app'):
             run_app = getattr(mod, 'run_app')
-            run_app(app)
+
+            try:
+                run_app(app)
+            except Exception as e:
+                if hasattr(app, 'sentry'):
+                    app.sentry.handle_exception(e)
+                    pass
+
+                import sys
+                import traceback
+                traceback.print_exc()
+                sys.exit(-1)
+
             pass
 
         if active_db and app.db:
