@@ -30,6 +30,7 @@ os.environ.setdefault('FANTASY_ACCOUNT_SECURITY_MODE', 'no')
 os.environ.setdefault('FANTASY_ACCOUNT_MODEL', 'account.models.Account')
 os.environ.setdefault('FANTASY_ROLE_MODEL', 'account.models.Role')
 os.environ.setdefault('FANTASY_PRIMARY_NODE', 'no')
+os.environ.setdefault('FANTASY_TRACK_MODE', 'no')
 
 _db = None
 if os.environ.get('FANTASY_ACTIVE_DB', 'no') != 'no':
@@ -105,6 +106,13 @@ def smart_account(app):
 
 
 def smart_logging():
+    """
+    ..deprecated::
+
+        弃用，应该通过类似run_app注入的方式来完成
+
+    :return:
+    """
     import sys
     from logging.config import dictConfig
 
@@ -186,8 +194,14 @@ def create_app(app_name, config={}, db=None, celery=None):
     :return:
     """
 
-    # smart_logging()
+    track_mode = os.environ['FANTASY_TRACK_MODE'] == 'yes'
+    if track_mode:
+        print('(00/14)fantasy track mode active...')
+
     active_db = os.environ['FANTASY_ACTIVE_DB'] == 'yes'
+
+    if track_mode:
+        print('(01/14)hacking webargs...')
 
     from webargs.flaskparser import parser
     from . import error_handler, hacker, cli
@@ -199,29 +213,40 @@ def create_app(app_name, config={}, db=None, celery=None):
                        os.getcwd()),
         'migrations')
 
+    if track_mode:
+        print('(02/14)initial app...')
+
     mod = importlib.import_module(app_name)
     app = FantasyFlask(__name__, root_path=os.path.dirname(mod.__file__))
+
+    if track_mode:
+        print('(03/14)update app.config...')
 
     if config:
         app.config.update(config)
 
     # 由外部做显式声明，否则不做调用
     config_module = os.environ.get('FANTASY_SETTINGS_MODULE', None)
+    if track_mode:
+        print("       found config module %s,try load it..." % config_module)
+
     if config_module:
         app.config.from_object(config_module)
+
+    if track_mode:
+        print('(04/14)confirm celery...')
 
     if celery:
         app.celery = celery
         pass
 
+    if track_mode:
+        print('(05/14)bind app context...')
+
     with app.app_context():
-        # 通用组件装载区域
-        # if os.environ['FANTASY_ACTIVE_DB'] != 'no':
-        #     from flask_sqlalchemy import SQLAlchemy
-        #     # from sqlalchemy import MetaData
-        #     # app.db = SQLAlchemy(metadata=MetaData())
-        #     app.db = SQLAlchemy()
-        #     pass
+
+        if track_mode:
+            print('(06/14)confirm db handle...')
 
         if db is None:
             global _db
@@ -229,15 +254,24 @@ def create_app(app_name, config={}, db=None, celery=None):
         else:
             app.db = db
 
+        if track_mode:
+            print('(07/14)confirm cache...')
+
         if os.environ['FANTASY_ACTIVE_CACHE'] != 'no':
             from flask_caching import Cache
             app.cache = Cache(app, config=app.config)
             pass
 
+        if track_mode:
+            print('(08/14)confirm sentry...')
+
         if os.environ.get('FANTASY_ACTIVE_SENTRY') != 'no':
             from raven.contrib.flask import Sentry
             Sentry(app)
             pass
+
+        if track_mode:
+            print('(09/14)active app...')
 
         if hasattr(mod, 'run_app'):
             run_app = getattr(mod, 'run_app')
@@ -245,6 +279,9 @@ def create_app(app_name, config={}, db=None, celery=None):
             pass
 
         if active_db and app.db:
+            if track_mode:
+                print('(10/14)trigger auto migrate...')
+
             smart_database(app)
             smart_migrate(app, migrations_root)
             smart_account(app)
@@ -255,7 +292,11 @@ def create_app(app_name, config={}, db=None, celery=None):
                 if exception and app.db.session.is_active:
                     app.db.session.rollback()
                     app.db.session.remove()
+
             pass
+
+        if track_mode:
+            print('(11/14)bind error handle...')
 
         # 添加错误控制
         @parser.error_handler
@@ -275,6 +316,9 @@ def create_app(app_name, config={}, db=None, celery=None):
             error_handle(app)
             pass
 
+        if track_mode:
+            print('(12/14)bind admin handle...')
+
         if hasattr(mod, 'run_admin'):
             import flask_admin
             admin = flask_admin.Admin(name=os.environ.get('FANTASY_ADMIN_NAME',
@@ -287,9 +331,16 @@ def create_app(app_name, config={}, db=None, celery=None):
             run_admin(admin)
             admin.init_app(app)
             pass
+
         pass
 
+    if track_mode:
+        print('(13/14)bind ff command...')
+
     app.cli.add_command(cli.ff)
+
+    if track_mode:
+        print('(14/14)bind cli command...')
 
     if hasattr(mod, 'run_cli'):
         run_cli = getattr(mod, 'run_cli')
