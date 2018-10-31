@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-version = "0.2.10"
+version = "0.2.11"
 
 setup(
     name='flask-fantasy',
