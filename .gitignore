@@ -1,5 +1,6 @@
 bootstrap/migrations/versions/
 README.private.md
+.drone.yml
 
 # Created by .ignore support plugin (hsz.mobi)
 ### Python template
