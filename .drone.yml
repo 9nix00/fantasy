@@ -1,5 +1,6 @@
 pipeline:
-  publish:
+  publish-baseimage:
+    workdir: ./dockerfiles/base
     image: plugins/docker
     repo: docker.io/wangwenpei/fantasy
     daemon_off: true
@@ -12,6 +13,24 @@ pipeline:
       - ${DRONE_COMMIT_BRANCH}-${DRONE_COMMIT_SHA:8:6}
       - ${DRONE_COMMIT_SHA:8:6}
     when:
-      branch: [master,beta]
+      branch: [master,beta,staging,dev]
       event: [ push, tag ]
       local: false
+  publish-pytest:
+    workdir: ./dockerfiles/pytest
+    image: plugins/docker
+    repo: docker.io/wangwenpei/pytest-fantasy
+    daemon_off: true
+    secrets: [ docker_username , docker_password ]
+    volumes:
+     - /var/run/docker.sock:/var/run/docker.sock
+    tags:
+      - ${DRONE_COMMIT_BRANCH/master/latest}
+      - ${DRONE_COMMIT_BRANCH}
+      - ${DRONE_COMMIT_BRANCH}-${DRONE_COMMIT_SHA:8:6}
+      - ${DRONE_COMMIT_SHA:8:6}
+    when:
+      branch: [master,beta,staging,dev]
+      event: [ push, tag ]
+      local: false
+
