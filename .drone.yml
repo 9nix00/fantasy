@@ -1,8 +1,8 @@
 pipeline:
   publish-baseimage:
-    workdir: ./dockerfiles/base
     image: plugins/docker
     repo: docker.io/wangwenpei/fantasy
+    dockerfile: dockerfiles/base/Dockerfile
     daemon_off: true
     secrets: [ docker_username , docker_password ]
     volumes:
