@@ -1,0 +1,97 @@
+pipeline:
+  release-base-package:
+    image: wangwenpei/twine
+    secrets: [ pypi_username , pypi_password ]
+    commands:
+      - "pypy setup.py sdist"
+      - "twine check dist/*"
+      - "twine upload dist/*"
+    when:
+      branch: [master, beta, staging, dev ]
+      event: [ push, tag ]
+      local: false
+  release-pytest-package:
+    image: wangwenpei/twine
+    secrets: [ pypi_username , pypi_password ]
+    commands:
+      - "cd pytest-fantasy && pypy setup.py sdist"
+      - "cd pytest-fantasy && twine check dist/*"
+      - "cd pytest-fantasy && twine upload dist/*"
+    when:
+      branch: [master, beta, staging, dev ]
+      event: [ push, tag ]
+      local: false
+  publish-pypy-base:
+    image: plugins/docker
+    repo: docker.io/wangwenpei/fantasy
+    dockerfile: dockerfiles/base/Dockerfile
+    daemon_off: true
+    secrets: [ docker_username , docker_password ]
+    volumes:
+     - /var/run/docker.sock:/var/run/docker.sock
+    tags:
+      - ${DRONE_COMMIT_BRANCH/master/latest}
+      - ${DRONE_COMMIT_BRANCH}
+      - ${DRONE_COMMIT_BRANCH}-${DRONE_COMMIT_SHA:8:6}
+      - ${DRONE_COMMIT_SHA:8:6}
+      - ${DRONE_TAG}
+    when:
+      branch: [master, beta, staging, dev ]
+      event: [ push, tag ]
+      local: false
+  publish-pypy-pytest:
+    workdir: ./dockerfiles/pytest
+    image: plugins/docker
+    repo: docker.io/wangwenpei/pytest-fantasy
+    dockerfile: dockerfiles/pypy-pytest/Dockerfile
+    daemon_off: true
+    secrets: [ docker_username , docker_password ]
+    volumes:
+     - /var/run/docker.sock:/var/run/docker.sock
+    tags:
+      - ${DRONE_COMMIT_BRANCH/master/latest}
+      - ${DRONE_COMMIT_BRANCH}
+      - ${DRONE_COMMIT_BRANCH}-${DRONE_COMMIT_SHA:8:6}
+      - ${DRONE_COMMIT_SHA:8:6}
+      - ${DRONE_TAG}
+    when:
+      branch: [ master, beta, staging, dev ]
+      event: [ push, tag ]
+      local: false
+#  publish-python-base:
+#    image: plugins/docker
+#    repo: docker.io/wangwenpei/fantasy
+#    dockerfile: dockerfiles/python-base/Dockerfile
+#    daemon_off: true
+#    secrets: [ docker_username , docker_password ]
+#    volumes:
+#     - /var/run/docker.sock:/var/run/docker.sock
+#    tags:
+#      - ${DRONE_COMMIT_BRANCH/master/latest}
+#      - ${DRONE_COMMIT_BRANCH}
+#      - ${DRONE_COMMIT_BRANCH}-${DRONE_COMMIT_SHA:8:6}
+#      - ${DRONE_COMMIT_SHA:8:6}
+#      - ${DRONE_TAG}
+#    when:
+#      branch: [master, beta, staging, dev ]
+#      event: [ push, tag ]
+#      local: false
+#  publish-python-pytest:
+#    workdir: ./dockerfiles/pytest
+#    image: plugins/docker
+#    repo: docker.io/wangwenpei/pytest-fantasy
+#    dockerfile: dockerfiles/python-pytest/Dockerfile
+#    daemon_off: true
+#    secrets: [ docker_username , docker_password ]
+#    volumes:
+#     - /var/run/docker.sock:/var/run/docker.sock
+#    tags:
+#      - ${DRONE_COMMIT_BRANCH/master/latest}
+#      - ${DRONE_COMMIT_BRANCH}
+#      - ${DRONE_COMMIT_BRANCH}-${DRONE_COMMIT_SHA:8:6}
+#      - ${DRONE_COMMIT_SHA:8:6}
+#      - ${DRONE_TAG}
+#    when:
+#      branch: [master, beta, staging, dev ]
+#      event: [ push, tag ]
+#      local: false
