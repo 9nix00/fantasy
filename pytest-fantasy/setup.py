@@ -1,7 +1,7 @@
-from setuptools import find_packages, setup
-
 # read the contents of your README file
 from os import path
+
+from setuptools import find_packages, setup
 
 this_directory = path.abspath(path.dirname(__file__))
 with open(path.join(this_directory, 'README.md')) as f:
@@ -12,6 +12,23 @@ with open(path.join(this_directory, 'requirements.txt')) as f:
                          v.strip() and v.strip()[0] != '#']
 
 version = "0.2.13"
+
+requirements_list = [
+    'fudge',
+    'codecov',
+    'flake8',
+    'pytest',
+    'pytest-pep8',
+    'pytest-cov',
+    'pytest-instafail',
+    'pytest-mock',
+    'pytest-logging',
+    'pytest-mock',
+    'pytest-watch',
+    'pytest-xdist',
+    'pytest-flask',
+    'pytest-fantasy'
+]
 
 setup(
     name='pytest-fantasy',
