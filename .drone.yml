@@ -7,8 +7,9 @@ pipeline:
         from_secret: pypi_username
       password:
         from_secret: pypyi_password
+      skip_build: false
     when:
-      branch: [master, beta, staging, dev ]
+      branch: [ master, beta, staging, dev ]
       event: [ push, tag ]
       local: false
 #  release-base-package:
