@@ -21,7 +21,7 @@ pipeline:
     commands:
       - "pypy3 setup.py sdist"
       - "twine check dist/*"
-      - "twine upload dist/* --username=$PYPI_USERNAME --password=$PYPI_PASSWORD"
+      - "twine upload dist/* --username=$PYPI_USERNAME --password=$PYPI_PASSWORD --skip-existing"
     when:
       branch: [master, beta, staging, dev ]
       event: [ push, tag ]
@@ -30,9 +30,10 @@ pipeline:
     image: wangwenpei/twine:pypy-latest
     secrets: [ pypi_username , pypi_password ]
     commands:
-      - "cd pytest-fantasy && pypy3 setup.py sdist"
-      - "cd pytest-fantasy && twine check dist/*"
-      - "cd pytest-fantasy && twine upload dist/* --username=$PYPI_USERNAME --password=$PYPI_PASSWORD"
+      - "cd pytest-fantasy"
+      - "pypy3 setup.py sdist"
+      - "twine check dist/*"
+      - "twine upload dist/* --username=$PYPI_USERNAME --password=$PYPI_PASSWORD --skip-existing"
     when:
       branch: [master, beta, staging, dev ]
       event: [ push, tag ]
