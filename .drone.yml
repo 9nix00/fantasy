@@ -8,6 +8,9 @@ pipeline:
       password:
         from_secret: pypyi_password
       skip_build: false
+      distributions:
+        - dist
+        - sdist
     when:
       branch: [ master, beta, staging, dev ]
       event: [ push, tag ]
