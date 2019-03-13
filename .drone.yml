@@ -1,4 +1,5 @@
 pipeline:
+# not work
 #  release-base-package:
 #    image: plugins/pypi:latest
 #    secrets: [ pypi_username , pypi_password ]
@@ -41,7 +42,7 @@ pipeline:
   publish-pypy-base:
     image: plugins/docker
     repo: docker.io/wangwenpei/fantasy
-    dockerfile: dockerfiles/base/Dockerfile
+    dockerfile: dockerfiles/pypy-base/Dockerfile
     daemon_off: true
     secrets: [ docker_username , docker_password ]
     volumes:
