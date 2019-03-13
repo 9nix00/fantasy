@@ -3,7 +3,7 @@ pipeline:
     image: wangwenpei/twine:pypy-latest
     secrets: [ pypi_username , pypi_password ]
     commands:
-      - "pypy setup.py sdist"
+      - "python setup.py sdist"
       - "twine check dist/*"
       - "twine upload dist/*"
     when:
