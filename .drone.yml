@@ -19,6 +19,7 @@ pipeline:
     image: wangwenpei/twine:pypy-latest
     secrets: [ pypi_username , pypi_password ]
     commands:
+      - "export"
       - "pypy3 setup.py sdist"
       - "twine check dist/*"
       - "twine upload dist/* --username=$PYPI_USERNAME --password=$PYPI_USERNAME"
