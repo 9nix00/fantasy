@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-version = "0.2.12"
+version = "0.2.13"
 
 # read the contents of your README file
 from os import path
