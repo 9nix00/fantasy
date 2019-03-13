@@ -4,7 +4,7 @@ pipeline:
     secrets: [ pypi_username , pypi_password ]
     commands:
       - "pypy3 setup.py sdist"
-      - "twine check dist/* --username=${pypi_username} --password=${pypi_username}"
+      - "twine check dist/*"
       - "twine upload dist/* --username=${pypi_username} --password=${pypi_username}"
     when:
       branch: [master, beta, staging, dev ]
