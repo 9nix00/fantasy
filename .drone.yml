@@ -1,7 +1,31 @@
 pipeline:
-  publish:
+  release-package-base:
+    image: wangwenpei/twine:pypy-latest
+    secrets: [ pypi_username , pypi_password ]
+    commands:
+      - "pypy3 setup.py sdist"
+      - "twine check dist/*"
+      - "twine upload dist/* --username=$PYPI_USERNAME --password=$PYPI_PASSWORD --skip-existing"
+    when:
+      branch: [master]
+      event: [ tag ]
+      local: false
+  release-package-pytest:
+    image: wangwenpei/twine:pypy-latest
+    secrets: [ pypi_username , pypi_password ]
+    commands:
+      - "cd pytest-fantasy"
+      - "pypy3 setup.py sdist"
+      - "twine check dist/*"
+      - "twine upload dist/* --username=$PYPI_USERNAME --password=$PYPI_PASSWORD --skip-existing"
+    when:
+      branch: [master]
+      event: [ tag ]
+      local: false
+  publish-pypy-base:
     image: plugins/docker
     repo: docker.io/wangwenpei/fantasy
+    dockerfile: dockerfiles/pypy-base/Dockerfile
     daemon_off: true
     secrets: [ docker_username , docker_password ]
     volumes:
@@ -11,7 +35,27 @@ pipeline:
       - ${DRONE_COMMIT_BRANCH}
       - ${DRONE_COMMIT_BRANCH}-${DRONE_COMMIT_SHA:8:6}
       - ${DRONE_COMMIT_SHA:8:6}
+      - ${DRONE_TAG}
     when:
-      branch: [master,beta]
-      event: [ push, tag ]
+      branch: [master]
+      event: [ tag ]
+      local: false
+  publish-pypy-pytest:
+    workdir: ./dockerfiles/pytest
+    image: plugins/docker
+    repo: docker.io/wangwenpei/pytest-fantasy
+    dockerfile: dockerfiles/pypy-pytest/Dockerfile
+    daemon_off: true
+    secrets: [ docker_username , docker_password ]
+    volumes:
+     - /var/run/docker.sock:/var/run/docker.sock
+    tags:
+      - ${DRONE_COMMIT_BRANCH/master/latest}
+      - ${DRONE_COMMIT_BRANCH}
+      - ${DRONE_COMMIT_BRANCH}-${DRONE_COMMIT_SHA:8:6}
+      - ${DRONE_COMMIT_SHA:8:6}
+      - ${DRONE_TAG}
+    when:
+      branch: [master]
+      event: [ tag ]
       local: false
