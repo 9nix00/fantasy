@@ -8,7 +8,7 @@ with open(path.join(this_directory, 'README.md')) as f:
     long_description = f.read()
 
 
-version = "0.2.13"
+version = "0.2.14"
 
 requirements_list = [
     'fudge',
