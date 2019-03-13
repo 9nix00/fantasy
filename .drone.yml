@@ -1,6 +1,6 @@
 pipeline:
   release-base-package:
-    image: wangwenpei/twine
+    image: wangwenpei/twine:pypy-latest
     secrets: [ pypi_username , pypi_password ]
     commands:
       - "pypy setup.py sdist"
