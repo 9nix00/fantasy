@@ -21,7 +21,7 @@ pipeline:
     commands:
       - "pypy3 setup.py sdist"
       - "twine check dist/*"
-      - "twine upload dist/* --username=${PYPI_USERNAME} --password=${PYPI_USERNAME}"
+      - "twine upload dist/* --username=$PYPI_USERNAME --password=$PYPI_USERNAME"
     when:
       branch: [master, beta, staging, dev ]
       event: [ push, tag ]
