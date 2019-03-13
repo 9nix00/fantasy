@@ -1,31 +1,31 @@
 pipeline:
-  release-base-package:
-    image: plugins/pypi:latest
-    secrets: [ pypi_username , pypi_password ]
-    settings:
-      username:
-        from_secret: pypi_username
-      password:
-        from_secret: pypyi_password
-      skip_build: false
-      distributions:
-        - dist
-        - sdist
-    when:
-      branch: [ master, beta, staging, dev ]
-      event: [ push, tag ]
-      local: false
 #  release-base-package:
-#    image: wangwenpei/twine:pypy-latest
+#    image: plugins/pypi:latest
 #    secrets: [ pypi_username , pypi_password ]
-#    commands:
-#      - "pypy3 setup.py sdist"
-#      - "twine check dist/*"
-#      - "twine upload dist/* --username=${pypi_username} --password=${pypi_username}"
+#    settings:
+#      username:
+#        from_secret: pypi_username
+#      password:
+#        from_secret: pypyi_password
+#      skip_build: false
+#      distributions:
+#        - dist
+#        - sdist
 #    when:
-#      branch: [master, beta, staging, dev ]
+#      branch: [ master, beta, staging, dev ]
 #      event: [ push, tag ]
 #      local: false
+  release-base-package:
+    image: wangwenpei/twine:pypy-latest
+    secrets: [ pypi_username , pypi_password ]
+    commands:
+      - "pypy3 setup.py sdist"
+      - "twine check dist/*"
+      - "twine upload dist/* --username=${PYPI_USERNAME} --password=${PYPI_USERNAME}"
+    when:
+      branch: [master, beta, staging, dev ]
+      event: [ push, tag ]
+      local: false
 #  release-pytest-package:
 #    image: wangwenpei/twine
 #    secrets: [ pypi_username , pypi_password ]
