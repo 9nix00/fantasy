@@ -1,43 +1,42 @@
 pipeline:
+#  release-base-package:
+#    image: plugins/pypi:latest
+#    secrets: [ pypi_username , pypi_password ]
+#    settings:
+#      username:
+#        from_secret: pypi_username
+#      password:
+#        from_secret: pypyi_password
+#      skip_build: false
+#      distributions:
+#        - dist
+#        - sdist
+#    when:
+#      branch: [ master, beta, staging, dev ]
+#      event: [ push, tag ]
+#      local: false
   release-base-package:
-    image: plugins/pypi:latest
+    image: wangwenpei/twine:pypy-latest
     secrets: [ pypi_username , pypi_password ]
-    settings:
-      username:
-        from_secret: pypi_username
-      password:
-        from_secret: pypyi_password
-      skip_build: false
-      distributions:
-        - dist
-        - sdist
+    commands:
+      - "pypy3 setup.py sdist"
+      - "twine check dist/*"
+      - "twine upload dist/* --username=$PYPI_USERNAME --password=$PYPI_PASSWORD"
     when:
-      branch: [ master, beta, staging, dev ]
+      branch: [master, beta, staging, dev ]
       event: [ push, tag ]
       local: false
-#  release-base-package:
-#    image: wangwenpei/twine:pypy-latest
-#    secrets: [ pypi_username , pypi_password ]
-#    commands:
-#      - "export"
-#      - "pypy3 setup.py sdist"
-#      - "twine check dist/*"
-#      - "twine upload dist/* --username=$PYPI_USERNAME --password=$PYPI_USERNAME"
-#    when:
-#      branch: [master, beta, staging, dev ]
-#      event: [ push, tag ]
-#      local: false
-#  release-pytest-package:
-#    image: wangwenpei/twine
-#    secrets: [ pypi_username , pypi_password ]
-#    commands:
-#      - "cd pytest-fantasy && pypy3 setup.py sdist"
-#      - "cd pytest-fantasy && twine check dist/*"
-#      - "cd pytest-fantasy && twine upload dist/* --username=${pypi_username} --password=${pypi_username}"
-#    when:
-#      branch: [master, beta, staging, dev ]
-#      event: [ push, tag ]
-#      local: false
+  release-pytest-package:
+    image: wangwenpei/twine:pypy-latest
+    secrets: [ pypi_username , pypi_password ]
+    commands:
+      - "cd pytest-fantasy && pypy3 setup.py sdist"
+      - "cd pytest-fantasy && twine check dist/*"
+      - "cd pytest-fantasy && twine upload dist/* --username=$PYPI_USERNAME --password=$PYPI_PASSWORD"
+    when:
+      branch: [master, beta, staging, dev ]
+      event: [ push, tag ]
+      local: false
   publish-pypy-base:
     image: plugins/docker
     repo: docker.io/wangwenpei/fantasy
