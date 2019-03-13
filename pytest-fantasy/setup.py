@@ -7,9 +7,6 @@ this_directory = path.abspath(path.dirname(__file__))
 with open(path.join(this_directory, 'README.md')) as f:
     long_description = f.read()
 
-with open(path.join(this_directory, 'requirements.txt')) as f:
-    requirements_list = [v.strip() for v in f.readlines() if
-                         v.strip() and v.strip()[0] != '#']
 
 version = "0.2.13"
 
