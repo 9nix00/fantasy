@@ -41,7 +41,6 @@ pipeline:
       event: [ tag ]
       local: false
   publish-pypy-pytest:
-    workdir: ./dockerfiles/pytest
     image: plugins/docker
     repo: docker.io/wangwenpei/pytest-fantasy
     dockerfile: dockerfiles/pypy-pytest/Dockerfile
