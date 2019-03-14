@@ -35,7 +35,6 @@ pipeline:
       - ${DRONE_COMMIT_BRANCH}
       - ${DRONE_COMMIT_BRANCH}-${DRONE_COMMIT_SHA:8:6}
       - ${DRONE_COMMIT_SHA:8:6}
-      - ${DRONE_TAG}
     when:
       branch: [master]
       event: [ push,tag ]
@@ -53,7 +52,6 @@ pipeline:
       - ${DRONE_COMMIT_BRANCH}
       - ${DRONE_COMMIT_BRANCH}-${DRONE_COMMIT_SHA:8:6}
       - ${DRONE_COMMIT_SHA:8:6}
-      - ${DRONE_TAG}
     when:
       branch: [master]
       event: [ push,tag ]
