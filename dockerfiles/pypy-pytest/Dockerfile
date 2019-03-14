@@ -1,4 +1,4 @@
-FROM wangwenpei/fantasy:0.2.15
+FROM wangwenpei/fantasy:latest
 MAINTAINER stormxx <stormxx@1024.engineer>
 
 RUN title='Install Depends Packages' && \
