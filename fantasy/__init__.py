@@ -19,7 +19,7 @@ import os
 
 from flask import Flask
 
-version = "0.2.14"
+version = "0.2.15"
 version_info = version.split('.')
 
 os.environ.setdefault('FANTASY_ACTIVE_DB', 'yes')
