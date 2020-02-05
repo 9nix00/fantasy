@@ -1,0 +1,6 @@
+Flask==1.1.1
+Flask-SQLAlchemy==2.4.1
+raven==6.10.0
+flask-prometheus-metrics==1.0.0
+Flask-Caching==1.8.0
+SQLAlchemy-Utils==0.36.1

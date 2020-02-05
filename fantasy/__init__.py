@@ -21,7 +21,7 @@ from flask import Flask
 
 version = "0.2.15"
 version_info = version.split('.')
-
+os.environ.setdefault('FANTASY_SETTINGS_MODULE', 'web.conf')
 os.environ.setdefault('FANTASY_ACTIVE_DB', 'yes')
 os.environ.setdefault('FANTASY_ACTIVE_CACHE', 'yes')
 os.environ.setdefault('FANTASY_ACTIVE_SENTRY', 'no')
