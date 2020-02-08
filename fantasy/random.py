@@ -1,6 +1,6 @@
 """
 =======================
-随机字符串生成的补充函数
+Random Library
 =======================
 """
 
@@ -10,8 +10,8 @@ import string
 
 def random_str(length=16, only_digits=False):
     """
-    生成随机字符串
-    :return:
+    create random string
+    :return: string
     """
 
     choices = string.digits

@@ -6,7 +6,12 @@
 """
 
 
-def hack_webargs():
+def en_us():
+    # do nothing
+    pass
+
+
+def zh_cn():
     from webargs import validate
 
     validate.Length.message_min = '长度不能少于{min}位'

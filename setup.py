@@ -1,42 +1,16 @@
+from os import path
+
 from setuptools import find_packages, setup
 
 version = "0.2.16"
 
-# read the contents of your README file
-from os import path
-
 this_directory = path.abspath(path.dirname(__file__))
+
 with open(path.join(this_directory, 'README.md')) as f:
     long_description = f.read()
 
-requirements_list = [
-    'python-dateutil',
-    'xmltodict',
-    'dicttoxml',
-    'gunicorn',
-    'redis',
-    'requests',
-    'raven',
-    'blinker',
-    'celery',
-    'webargs',
-    'mongoengine',
-    'pymysql',
-    'cryptography',
-    'bcrypt',
-    'pycrypto',
-    'sqlalchemy-utils',
-    'flask',
-    'flask-sqlalchemy',
-    'flask-caching',
-    'flask-migrate',
-    'flask-admin',
-    'flask-security',
-    'flask-mongoengine',
-    'flask-socketio',
-    'gevent',
-    'gevent-websocket'
-]
+with open(path.join(this_directory, 'requirements.txt')) as f:
+    requirements_list = f.readlines()
 
 setup(
     name='flask-fantasy',
@@ -45,13 +19,15 @@ setup(
     install_requires=requirements_list,
     version=version,
     packages=find_packages(exclude=["tests"]),
-    url='https://github.com/wangwenpei/fantasy',
-    download_url='https://github.com/wangwenpei/fantasy/tarball/master',
+    url='https://github.com/9nix00/fantasy',
+    download_url='https://github.com/9nix00/fantasy/archive/v0.2.16.tar.gz',
     license='MIT',
     author='WANG WENPEI',
+    entry_points={"pytest11": ["pytest_fantasy = fantasy_pytest.fixtures"]},
     zip_safe=False,
     test_suite="tests",
     author_email='stormxx@1024.engineer',
-    description='A bootstrap tool for Flask APP',
+    description='A lazy web-framework based on Flask',
     keywords='fantasy,flask',
+    classifiers=["Framework :: Pytest"],
 )
