@@ -4,8 +4,7 @@ fantasy CLI wrapper
 ====================
 """
 
-from fantasy_command import ff, migrate, queue
+from fantasy_command import ff, migrate
 
 _ = migrate
-_ = queue
 _ = ff
