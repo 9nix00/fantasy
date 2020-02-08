@@ -9,7 +9,7 @@ import os
 
 from flask import Flask
 
-from . import config_env_list
+from . import config_env_list, version
 
 _db = None
 if os.environ.get('FANTASY_ACTIVE_DB', 'no') == 'yes':
@@ -17,6 +17,20 @@ if os.environ.get('FANTASY_ACTIVE_DB', 'no') == 'yes':
 
     _db = SQLAlchemy()
     pass
+
+
+def router(app, sub_apps={}):
+    from werkzeug.wsgi import DispatcherMiddleware
+    embed_apps = {}
+
+    if app.config['FANTASY_ACTIVE_EXPORTER'] == 'yes':
+        from prometheus_client import make_wsgi_app
+        embed_apps['/metrics'] = make_wsgi_app()
+
+    if embed_apps:
+        sub_apps.update(embed_apps)
+
+    return DispatcherMiddleware(app, sub_apps)
 
 
 class FantasyFlask(Flask):
@@ -200,6 +214,14 @@ def create_app(app_name, config={}, celery=None):
         if app.config['FANTASY_ACTIVE_SENTRY'] == 'yes':
             from raven.contrib.flask import Sentry
             Sentry(app)
+            pass
+
+        if app.config['FANTASY_ACTIVE_EXPORTER'] == 'yes':
+            from prometheus_client import make_wsgi_app
+            from flask_prometheus_metrics import register_metrics
+            register_metrics(app, app_version='v' + version,
+                             app_config=app.config.get('ENV'))
+
             pass
 
         track_info('(08/14)confirm cache...')
