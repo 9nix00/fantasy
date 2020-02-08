@@ -4,5 +4,5 @@
 =============
 """
 
-version = "0.2.16"
+version = "0.3.0"
 version_info = version.split('.')
