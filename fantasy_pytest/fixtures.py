@@ -25,8 +25,12 @@ How to Use？
 
 """
 
+import os
+
 import pytest
+
 pytest_plugins = "pytest_flask",
+
 
 def pytest_configure():
     pytest.resource_root = None
@@ -46,4 +50,11 @@ def app():
     from fantasy.bootstrap import create_app
     app = create_app(pytest.app_name, config=pytest.app_config)
     app.config['TESTING'] = True
-    return app
+    yield app
+
+    if os.environ['FANTASY_ACTIVE_DB'] == 'yes':
+        from sqlalchemy.engine.url import make_url
+        from sqlalchemy_utils import drop_database
+        drop_database(make_url(pytest.app_config['SQLALCHEMY_DATABASE_URI']))
+
+    pass
