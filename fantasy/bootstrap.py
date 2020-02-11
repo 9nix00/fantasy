@@ -72,10 +72,10 @@ def smart_migrate(app):
     db = app.db
 
     migrations_root = os.path.join(
-        os.environ.get('FANTASY_MIGRATION_PATH', os.getcwd()), 'migrations')
+        app.config.get('FANTASY_MIGRATION_PATH', os.getcwd()), 'migrations')
 
     if os.path.exists(migrations_root) and \
-            os.environ['FANTASY_AUTO_MIGRATE'] == 'yes':
+            app.config['FANTASY_AUTO_MIGRATE'] == 'yes':
         from flask_migrate import (Migrate,
                                    upgrade as migrate_upgrade)
 
@@ -88,23 +88,23 @@ def smart_migrate(app):
 
 def smart_account(app):
     """Active account, depends on flask_security"""
-    if os.environ['FANTASY_ACTIVE_ACCOUNT'] == 'no':
+    if app.config['FANTASY_ACTIVE_ACCOUNT'] == 'no':
         return
 
     from flask_security import SQLAlchemyUserDatastore, Security
 
-    account_module_name, account_class_name = os.environ[
+    account_module_name, account_class_name = app.config[
         'FANTASY_ACCOUNT_MODEL'].rsplit('.', 1)
 
     account_module = importlib.import_module(account_module_name)
     account_class = getattr(account_module, account_class_name)
 
-    role_module_name, role_class_name = os.environ[
+    role_module_name, role_class_name = app.config[
         'FANTASY_ROLE_MODEL'].rsplit('.', 1)
     role_module = importlib.import_module(role_module_name)
     role_class = getattr(role_module, role_class_name)
 
-    r = True if os.environ[
+    r = True if app.config[
                     'FANTASY_ACCOUNT_SECURITY_MODE'] != 'no' else False
 
     Security(app,

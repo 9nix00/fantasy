@@ -67,7 +67,7 @@ def show_env(p=print):
     p(optional_env_list)
 
     p('active db:')
-    p(['SQLALCHEMY_DATABASE_URI', ])
+    p(['SQLALCHEMY_DATABASE_URI', 'FANTASY_MIGRATION_PATH'])
 
     p('active cache:')
     p(['CACHE_TYPE', ])
