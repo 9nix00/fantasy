@@ -45,8 +45,6 @@ for k, v in requirement_env_dict.items():
 optional_env_list = [
     'FANTASY_ADMIN_NAME',  # admin
     'FANTASY_ADMIN_TEMPLATE_MODE',  # bootstrap3
-    'FANTASY_SETTINGS_MODULE',  # web.conf
-    'FLASK_SECRET_KEY',  # flask-security require
 ]
 
 global_env_list = [
@@ -63,12 +61,22 @@ def show_env(p=print):
     """show optional environment"""
     p('requirements:')
     p(requirement_env_dict)
+    p('global[set in os.environ]:')
+    p(global_env_list)
     p('optional:')
     p(optional_env_list)
+
 
     p('active db:')
     p(['SQLALCHEMY_DATABASE_URI', 'FANTASY_MIGRATION_PATH'])
 
+    p('active session:')
+    p(['SESSION_TYPE', 'SESSION_KEY'])
+
     p('active cache:')
     p(['CACHE_TYPE', ])
+
+    p('user feature:')
+    p(['ACCOUNT_USERNAME_DISABLE_REGISTER', 'SECURITY_PASSWORD_SALT',
+       'SECRET_KEY'])
     pass
