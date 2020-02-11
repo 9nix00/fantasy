@@ -66,10 +66,14 @@ def smart_database(app):
     pass
 
 
-def smart_migrate(app, migrations_root):
+def smart_migrate(app):
     """Migrate database if migrations exists and AUTO_MIGRATE set to 'yes'"""
 
     db = app.db
+
+    migrations_root = os.path.join(
+        os.environ.get('FANTASY_MIGRATION_PATH', os.getcwd()), 'migrations')
+
     if os.path.exists(migrations_root) and \
             os.environ['FANTASY_AUTO_MIGRATE'] == 'yes':
         from flask_migrate import (Migrate,
@@ -267,7 +271,8 @@ def create_app(app_name, config={}, celery=None):
         track_info('(11/14)bind error handle...')
 
         @parser.error_handler
-        def h_webargs(error):
+        def handle_error(error, req, schema, status_code, headers, *args,
+                         **kwargs):
             return error_handler.webargs_error(error)
 
         @app.errorhandler(422)

@@ -13,5 +13,6 @@ def pytest_configure():
 
     pytest.app_config = {
         'FANTASY_ACTIVE_CACHE': 'no',
+        'INNER_HOOK': 'yes'
     }
     pass
