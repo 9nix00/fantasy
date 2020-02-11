@@ -48,6 +48,12 @@ def keep_database():
 
 
 @pytest.fixture
+def skip_database(monkeypatch):
+    pytest.keep_database = False
+    monkeypatch.setenv('FANTASY_ACTIVE_DB', 'no')
+
+
+@pytest.fixture
 def app():
     from fantasy.bootstrap import create_app
     app = create_app(pytest.app_name, config=pytest.app_config)
