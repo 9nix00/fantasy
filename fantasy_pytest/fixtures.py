@@ -32,17 +32,19 @@ import pytest
 pytest_plugins = "pytest_flask",
 
 
-def pytest_configure():
+def pytest_configure(config):
     pytest.resource_root = None
     pytest.app_name = None
     pytest.app_config = {}
+    pytest.keep_database = False
+    config.addinivalue_line(
+        "markers", "env(name): mark test to run only on named environment"
+    )
 
 
-def pytest_addoption(parser):
-    parser.addoption("--keep-database", action="store_true",
-                     default=False,
-                     help="keep database data after test finished.")
-    pass
+@pytest.fixture
+def keep_database():
+    pytest.keep_database = True
 
 
 @pytest.fixture
@@ -52,7 +54,8 @@ def app():
     app.config['TESTING'] = True
     yield app
 
-    if os.environ['FANTASY_ACTIVE_DB'] == 'yes':
+    if pytest.keep_database is False \
+            and os.environ['FANTASY_ACTIVE_DB'] == 'yes':
         from sqlalchemy.engine.url import make_url
         from sqlalchemy_utils import drop_database
         drop_database(make_url(pytest.app_config['SQLALCHEMY_DATABASE_URI']))
