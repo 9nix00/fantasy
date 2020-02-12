@@ -54,9 +54,9 @@ def skip_database(monkeypatch):
 
 
 @pytest.fixture
-def active_module():
-    import os
-    os.environ['FANTASY_ACTIVE_DB'] = 'no'
+@pytest.fixture
+def active_module(monkeypatch):
+    monkeypatch.setenv('FANTASY_ACTIVE_DB', 'no')
 
 
 @pytest.fixture
