@@ -23,6 +23,7 @@ version_info = version.split('.')
 requirement_env_dict = {
     # active
     'FANTASY_ACTIVE_DB': 'yes',
+    'FANTASY_ACTIVE_CELERY': 'no',
     'FANTASY_ACTIVE_CACHE': 'yes',
     'FANTASY_ACTIVE_EXPORTER': 'yes',
     'FANTASY_ACTIVE_SENTRY': 'yes',
@@ -35,7 +36,7 @@ requirement_env_dict = {
     'FANTASY_TRACK_MODE': 'no',
     'FANTASY_WORKSPACE': os.getcwd(),
     'CELERY_APP_NAME': 'fantasy',
-    'SQLALCHEMY_TRACK_MODIFICATIONS': 'True'
+    'SQLALCHEMY_TRACK_MODIFICATIONS': 'True',
 }
 
 for k, v in requirement_env_dict.items():
@@ -49,7 +50,12 @@ optional_env_list = [
 
 global_env_list = [
     'FANTASY_ACTIVE_DB',
+    'FANTASY_ACTIVE_CELERY',
     'FANTASY_SETTINGS_MODULE',
+
+    'CELERY_APP_NAME',
+    'CELERY_RESULT_BACKEND',
+    'CELERY_BROKER_URL',
 ]
 
 all_env_list = list(requirement_env_dict.keys()) + optional_env_list
@@ -66,7 +72,6 @@ def show_env(p=print):
     p('optional:')
     p(optional_env_list)
 
-
     p('active db:')
     p(['SQLALCHEMY_DATABASE_URI', 'FANTASY_MIGRATION_PATH'])
 
@@ -79,4 +84,8 @@ def show_env(p=print):
     p('user feature:')
     p(['ACCOUNT_USERNAME_DISABLE_REGISTER', 'SECURITY_PASSWORD_SALT',
        'SECRET_KEY'])
+
+    p('flask built-in:')
+    p(['FLASK_ENV', ])
+
     pass
