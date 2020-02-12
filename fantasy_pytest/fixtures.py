@@ -61,7 +61,7 @@ def skip_database(monkeypatch):
 def app():
     from fantasy.bootstrap import create_app
     app = create_app(pytest.app_name, config=pytest.app_config)
-    app.config['ENV'] = 'pytest'
+    app.config['TESTING'] = True
     yield app
 
     if pytest.keep_database is False \
