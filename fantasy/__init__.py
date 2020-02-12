@@ -79,7 +79,7 @@ def show_env(p=print):
     p(['SESSION_TYPE', 'SESSION_KEY'])
 
     p('active cache:')
-    p(['CACHE_TYPE', ])
+    p(['CACHE_TYPE', 'CACHE_REDIS_URL'])
 
     p('user feature:')
     p(['ACCOUNT_USERNAME_DISABLE_REGISTER', 'SECURITY_PASSWORD_SALT',
