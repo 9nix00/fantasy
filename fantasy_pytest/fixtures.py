@@ -42,10 +42,6 @@ def pytest_configure(config):
     )
 
 
-# @pytest.fixture(autouse=True)
-# def env_setup(monkeypatch):
-#     monkeypatch.setenv('FLASK_ENV', 'pytest')
-
 @pytest.fixture
 def keep_database():
     pytest.keep_database = True
@@ -58,7 +54,13 @@ def skip_database(monkeypatch):
 
 
 @pytest.fixture
-def app():
+def active_module():
+    import os
+    os.environ['FANTASY_ACTIVE_DB'] = 'no'
+
+
+@pytest.fixture
+def app(active_module):
     from fantasy.bootstrap import create_app
     app = create_app(pytest.app_name, config=pytest.app_config)
     app.config['TESTING'] = True

@@ -29,10 +29,3 @@ class Celery(celery.Celery):
         # hook into the Celery error handler
         register_signal(client)
         pass
-
-
-def create_celery(name):
-    c = Celery(name,
-               backend=os.environ['CELERY_RESULT_BACKEND'],
-               broker=os.environ['CELERY_BROKER_URL'])
-    return c

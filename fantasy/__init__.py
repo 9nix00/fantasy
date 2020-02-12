@@ -22,8 +22,8 @@ version_info = version.split('.')
 
 requirement_env_dict = {
     # active
-    'FANTASY_ACTIVE_DB': 'yes',
-    'FANTASY_ACTIVE_CELERY': 'no',
+    'FANTASY_ACTIVE_DB': 'no',
+    'FANTASY_ACTIVE_CELERY': 'yes',
     'FANTASY_ACTIVE_CACHE': 'yes',
     'FANTASY_ACTIVE_EXPORTER': 'yes',
     'FANTASY_ACTIVE_SENTRY': 'yes',

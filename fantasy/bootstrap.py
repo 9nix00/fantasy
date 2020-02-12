@@ -18,6 +18,17 @@ if os.environ.get('FANTASY_ACTIVE_DB', 'no') == 'yes':
     _db = SQLAlchemy()
     pass
 
+_celery = None
+if os.environ.get('FANTASY_ACTIVE_CELERY', 'no') == 'yes':
+    from celery import Celery
+
+    _celery = Celery(os.environ.get('CELERY_APP_NAME', 'fantasy'),
+                     backend=os.environ.get('CELERY_RESULT_BACKEND',
+                                            'redis://localhost:6379/2'),
+                     broker=os.environ.get('CELERY_BROKER_URL',
+                                           'redis://localhost:6379/1'))
+    pass
+
 
 def router(app, sub_apps={}):
     from werkzeug.wsgi import DispatcherMiddleware
@@ -43,7 +54,7 @@ class FantasyFlask(Flask):
 
     """
     cache = None
-    celery = None
+    celery = _celery
     db = _db
     pass
 
@@ -154,7 +165,7 @@ def track_info(msg):
     pass
 
 
-def create_app(app_name, config={}, celery=None):
+def create_app(app_name, config={}):
     """
     App Factory Tools
 
@@ -205,10 +216,7 @@ def create_app(app_name, config={}, celery=None):
             pass
         pass
 
-    track_info('(04/14)confirm celery...')
-    if celery:
-        app.celery = celery
-        pass
+    track_info('(04/14)confirm celery... skip for now...')
 
     track_info('(05/14)bind app context...')
     with app.app_context():
@@ -224,7 +232,7 @@ def create_app(app_name, config={}, celery=None):
             from prometheus_client import make_wsgi_app
             from flask_prometheus_metrics import register_metrics
             register_metrics(app, app_version='v' + version,
-                             app_config=app.config.get('ENV'))
+                             app_config=app.config['ENV'])
 
             pass
 
