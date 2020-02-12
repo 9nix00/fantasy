@@ -54,7 +54,6 @@ def skip_database(monkeypatch):
 
 
 @pytest.fixture
-@pytest.fixture
 def active_module(monkeypatch):
     monkeypatch.setenv('FANTASY_ACTIVE_DB', 'no')
 
@@ -73,3 +72,11 @@ def app(active_module):
         drop_database(make_url(pytest.app_config['SQLALCHEMY_DATABASE_URI']))
 
     pass
+
+
+@pytest.fixture
+def celery_app(client):
+    app = client.application
+    celery_app = app.celery
+    celery_app.conf.update(CELERY_ALWAYS_EAGER=True)
+    return celery_app
