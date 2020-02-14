@@ -28,6 +28,7 @@ requirement_env_dict = {
     'FANTASY_ACTIVE_EXPORTER': 'yes',
     'FANTASY_ACTIVE_SENTRY': 'yes',
     'FANTASY_ACTIVE_ACCOUNT': 'yes',
+    'FANTASY_ACTIVE_CORS': 'no',
     # account settings
     'FANTASY_ACCOUNT_SECURITY_MODE': 'no',
     'FANTASY_ACCOUNT_MODEL': 'account.models.Account',
@@ -84,6 +85,9 @@ def show_env(p=print):
     p('user feature:')
     p(['ACCOUNT_USERNAME_DISABLE_REGISTER', 'SECURITY_PASSWORD_SALT',
        'SECRET_KEY'])
+
+    p('cors feature:')
+    p(['CORS_KWARGS', ])
 
     p('flask built-in:')
     p(['FLASK_ENV', ])

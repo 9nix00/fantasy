@@ -216,7 +216,11 @@ def create_app(app_name, config={}):
             pass
         pass
 
-    track_info('(04/14)confirm celery... skip for now...')
+    track_info('(04/14)confirm cors...')
+    if app.config['FANTASY_ACTIVE_CORS'] == 'yes':
+        from flask_cors import CORS
+        CORS(app, **app.config.get('CORS_KWARGS', {}))
+        pass
 
     track_info('(05/14)bind app context...')
     with app.app_context():
