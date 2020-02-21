@@ -31,7 +31,7 @@ if os.environ.get('FANTASY_ACTIVE_CELERY', 'no') == 'yes':
 
 
 def router(app, sub_apps={}):
-    from werkzeug.wsgi import DispatcherMiddleware
+    from werkzeug.middleware.dispatcher import DispatcherMiddleware
     embed_apps = {}
 
     if app.config['FANTASY_ACTIVE_EXPORTER'] == 'yes':
