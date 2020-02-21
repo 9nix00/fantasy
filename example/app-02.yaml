@@ -1,0 +1,26 @@
+app:
+  name: welcome
+  configs:
+    - name: FANTASY_ACTIVE_SENTRY
+      value: "yes"
+  containerized:
+    base_image: "jamiehewland/alpine-pypy:latest"
+  active:
+    - name: metrics
+      args:
+        path: /metrics
+        token: 11111
+  dispatcher_repos:
+    - url: git@github.com:9nix00/fantasy-blocks.git
+      protocol: git
+      branch: master
+      local_path: "{{ working_root }}/fantasy-blocks"
+  dispatcher:
+    - path: /account/weapp
+      module: 'account.weapp'
+    - path: /accounts/weapp
+      module: 'accounts.weapp'
+  models:
+    - account.username
+  tasks:
+    - welcome
