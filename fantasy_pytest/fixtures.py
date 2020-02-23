@@ -75,8 +75,10 @@ def app(active_module):
 
 
 @pytest.fixture
-def celery_app(client):
+def mock_celery(client):
     app = client.application
     celery_app = app.celery
     celery_app.conf.update(CELERY_ALWAYS_EAGER=True)
-    return celery_app
+    yield celery_app
+    celery_app.control.purge()
+
