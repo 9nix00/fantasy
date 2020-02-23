@@ -23,11 +23,12 @@ version_info = version.split('.')
 requirement_env_dict = {
     # active
     'FANTASY_ACTIVE_DB': 'no',
-    'FANTASY_ACTIVE_CELERY': 'yes',
+    'FANTASY_ACTIVE_CELERY': 'no',
     'FANTASY_ACTIVE_CACHE': 'yes',
     'FANTASY_ACTIVE_EXPORTER': 'yes',
     'FANTASY_ACTIVE_SENTRY': 'yes',
     'FANTASY_ACTIVE_ACCOUNT': 'yes',
+    'FANTASY_ACTIVE_I18N': 'yes',
     'FANTASY_ACTIVE_CORS': 'no',
     # account settings
     'FANTASY_ACCOUNT_SECURITY_MODE': 'no',
@@ -51,12 +52,12 @@ optional_env_list = [
 
 global_env_list = [
     'FANTASY_ACTIVE_DB',
-    'FANTASY_ACTIVE_CELERY',
     'FANTASY_SETTINGS_MODULE',
-
-    'CELERY_APP_NAME',
-    'CELERY_RESULT_BACKEND',
-    'CELERY_BROKER_URL',
+    # support load from app.config
+    # 'FANTASY_ACTIVE_CELERY',
+    # 'CELERY_APP_NAME',
+    # 'CELERY_RESULT_BACKEND',
+    # 'CELERY_BROKER_URL',
 ]
 
 all_env_list = list(requirement_env_dict.keys()) + optional_env_list

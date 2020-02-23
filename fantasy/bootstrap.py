@@ -18,15 +18,17 @@ if os.environ.get('FANTASY_ACTIVE_DB', 'no') == 'yes':
     _db = SQLAlchemy()
     pass
 
-_celery = None
-if os.environ.get('FANTASY_ACTIVE_CELERY', 'no') == 'yes':
-    from celery import Celery
 
-    _celery = Celery(os.environ.get('CELERY_APP_NAME', 'fantasy'),
-                     backend=os.environ.get('CELERY_RESULT_BACKEND',
-                                            'redis://localhost:6379/2'),
-                     broker=os.environ.get('CELERY_BROKER_URL',
-                                           'redis://localhost:6379/1'))
+def connect_celery(app, celery):
+    app.celery = celery
+    celery.conf.update(app.config)
+
+    class ContextTask(celery.Task):
+        def __call__(self, *args, **kwargs):
+            with app.app_context():
+                return self.run(*args, **kwargs)
+
+    celery.Task = ContextTask
     pass
 
 
@@ -54,7 +56,7 @@ class FantasyFlask(Flask):
 
     """
     cache = None
-    celery = _celery
+    celery = None
     db = _db
     pass
 
@@ -216,10 +218,20 @@ def create_app(app_name, config={}):
             pass
         pass
 
-    track_info('(04/14)confirm cors...')
+    track_info('(04/14)confirm cors ,i18n & celery...')
     if app.config['FANTASY_ACTIVE_CORS'] == 'yes':
         from flask_cors import CORS
         CORS(app, **app.config.get('CORS_KWARGS', {}))
+        pass
+
+    if app.config['FANTASY_ACTIVE_I18N'] == 'yes':
+        from flask_babel import Babel
+        Babel(app)
+        pass
+
+    if app.config['FANTASY_ACTIVE_CELERY'] == 'yes':
+        from .celery import Celery
+        connect_celery(app, Celery())
         pass
 
     track_info('(05/14)bind app context...')
@@ -276,7 +288,6 @@ def create_app(app_name, config={}):
             # @app.teardown_request
             # def session_clear(exception=None):
             #     if exception and app.db.session.is_active:
-            #         app.db.session.rollback()
             #         app.db.session.remove()
             pass
 
