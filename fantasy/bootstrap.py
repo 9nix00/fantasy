@@ -184,7 +184,6 @@ def create_app(app_name, config={}):
     """
 
     track_info('(00/14)fantasy track mode active...')
-    from webargs.flaskparser import parser
     from . import error_handler, cli
 
     track_info('(01/14)i18n webargs...')
@@ -293,10 +292,9 @@ def create_app(app_name, config={}):
 
         track_info('(11/14)bind error handle...')
 
-        @parser.error_handler
-        def handle_error(error, req, schema, status_code, headers, *args,
-                         **kwargs):
-            return error_handler.webargs_error(error)
+        @app.errorhandler(400)
+        def h_400(error):
+            return error_handler.http400(error)
 
         @app.errorhandler(422)
         def h_422(error):

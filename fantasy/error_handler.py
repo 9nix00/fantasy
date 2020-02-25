@@ -5,11 +5,12 @@ Fantasy error handle
 """
 
 from flask import jsonify
-from webargs.flaskparser import abort
 
 
-def webargs_error(error):
-    abort(422, errors=error.messages, exc=error)
+def http400(error):
+    if hasattr(error, 'data'):
+        return jsonify(error.data), 400
+    return error, 400
 
 
 def http422(error):
