@@ -32,13 +32,19 @@ def connect_celery(app, celery):
     pass
 
 
-def router(app, sub_apps={}):
+def router(app, sub_apps={}, prefix=None):
     from werkzeug.middleware.dispatcher import DispatcherMiddleware
     embed_apps = {}
 
+    prefix = prefix or os.environ['FANTASY_APPLICATION_ROOT']
+
+    if sub_apps:
+        sub_apps = {prefix + k.lstrip('/'): v for k, v in
+                             sub_apps.items()}
+
     if app.config['FANTASY_ACTIVE_EXPORTER'] == 'yes':
         from prometheus_client import make_wsgi_app
-        embed_apps['/metrics'] = make_wsgi_app()
+        embed_apps[prefix + 'metrics'] = make_wsgi_app()
 
     if embed_apps:
         sub_apps.update(embed_apps)

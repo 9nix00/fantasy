@@ -30,6 +30,7 @@ requirement_env_dict = {
     'FANTASY_ACTIVE_ACCOUNT': 'yes',
     'FANTASY_ACTIVE_I18N': 'yes',
     'FANTASY_ACTIVE_CORS': 'no',
+    'FANTASY_APPLICATION_ROOT': '/',
     # account settings
     'FANTASY_ACCOUNT_SECURITY_MODE': 'no',
     'FANTASY_ACCOUNT_MODEL': 'account.models.Account',
@@ -53,6 +54,7 @@ optional_env_list = [
 global_env_list = [
     'FANTASY_ACTIVE_DB',
     'FANTASY_SETTINGS_MODULE',
+    'FANTASY_APPLICATION_ROOT',
     # support load from app.config
     # 'FANTASY_ACTIVE_CELERY',
     # 'CELERY_APP_NAME',
