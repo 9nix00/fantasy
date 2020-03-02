@@ -40,6 +40,7 @@ requirement_env_dict = {
     'FANTASY_WORKSPACE': os.getcwd(),
     'CELERY_APP_NAME': 'fantasy',
     'SQLALCHEMY_TRACK_MODIFICATIONS': 'True',
+    'FANTASY_TASKS_PATH': '',
 }
 
 for k, v in requirement_env_dict.items():
@@ -49,6 +50,7 @@ for k, v in requirement_env_dict.items():
 optional_env_list = [
     'FANTASY_ADMIN_NAME',  # admin
     'FANTASY_ADMIN_TEMPLATE_MODE',  # bootstrap3
+
 ]
 
 global_env_list = [
