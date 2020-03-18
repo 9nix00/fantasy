@@ -30,5 +30,3 @@ current is 0.3.x.
 
 and we don't use it in our production level project, 
 just for experiment project.
-
-if you want to try use it, please checkout v0.2.16 branch.
