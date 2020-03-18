@@ -7,7 +7,7 @@ RUN title='Install Depends Packages' && \
     apk add --no-cache --virtual .run-deps \
         openssl ca-certificates \
         musl-dev libffi-dev openssl-dev python3-dev && \
-    pip install flask-fantasy==0.3.0 --no-cache-dir  --retries=20 --timeout=30 && \
+    pip install flask-fantasy==0.3.1 --no-cache-dir  --retries=20 --timeout=30 && \
     apk del .build-deps
 
 ENV PYTHONUNBUFFERED 1
