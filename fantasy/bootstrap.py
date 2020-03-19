@@ -287,8 +287,7 @@ def create_app(app_name, config={}):
             pass
 
         if app.config['FANTASY_ACTIVE_ACCOUNT'] == 'yes' and \
-                app.config['FANTASY_ACCOUNT_MANAGER'] and \
-                app.is_root_app:
+                app.config['FANTASY_ACCOUNT_MANAGER']:
             smart_account(app)
             pass
 
