@@ -57,6 +57,7 @@ global_env_list = [
     'FANTASY_ACTIVE_DB',
     'FANTASY_SETTINGS_MODULE',
     'FANTASY_APPLICATION_ROOT',
+    'FANTASY_APP',
     # support load from app.config
     # 'FANTASY_ACTIVE_CELERY',
     # 'CELERY_APP_NAME',

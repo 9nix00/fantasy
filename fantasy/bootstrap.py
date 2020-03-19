@@ -65,6 +65,12 @@ class FantasyFlask(Flask):
     celery = None
     db = _db
     account_manager = None
+    root_app = None
+
+    @property
+    def is_root_app(self):
+        return self.root_app == self.name
+
     pass
 
 
@@ -186,6 +192,7 @@ def create_app(app_name, config={}):
     track_info('(02/14)initial app...')
     mod = importlib.import_module(app_name)
     app = FantasyFlask(app_name, root_path=os.path.dirname(mod.__file__))
+    app.root_app = os.environ.get('FANTASY_APP', app_name)
 
     track_info('(03/14)update app.config...')
     if config:
@@ -274,13 +281,14 @@ def create_app(app_name, config={}):
 
             pass
 
-        if app.db:
+        if app.db and app.is_root_app:
             track_info('(10/14)trigger auto migrate...')
             smart_migrate(app)
             pass
 
         if app.config['FANTASY_ACTIVE_ACCOUNT'] == 'yes' and \
-                app.config['FANTASY_ACCOUNT_MANAGER']:
+                app.config['FANTASY_ACCOUNT_MANAGER'] and \
+                app.is_root_app:
             smart_account(app)
             pass
 
@@ -329,7 +337,8 @@ def create_app(app_name, config={}):
         pass
 
     track_info('(13/14)bind ff command...')
-    app.cli.add_command(cli.ff)
+    if app.is_root_app:
+        app.cli.add_command(cli.ff)
 
     track_info('(14/14)bind cli command...')
     if hasattr(mod, 'run_cli'):
