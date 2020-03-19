@@ -40,7 +40,7 @@ def router(app, sub_apps={}, prefix=None):
 
     if sub_apps:
         sub_apps = {prefix + k.lstrip('/'): v for k, v in
-                             sub_apps.items()}
+                    sub_apps.items()}
 
     if app.config['FANTASY_ACTIVE_EXPORTER'] == 'yes':
         from prometheus_client import make_wsgi_app
@@ -64,12 +64,12 @@ class FantasyFlask(Flask):
     cache = None
     celery = None
     db = _db
+    account_manager = None
     pass
 
 
 def smart_database(app):
     """Initial Database"""
-
     from sqlalchemy.engine.url import make_url
     from sqlalchemy_utils import database_exists, create_database
 
@@ -107,29 +107,14 @@ def smart_migrate(app):
 
 def smart_account(app):
     """Active account, depends on flask_security"""
-    if app.config['FANTASY_ACTIVE_ACCOUNT'] == 'no':
-        return
 
-    from flask_security import SQLAlchemyUserDatastore, Security
-
-    account_module_name, account_class_name = app.config[
-        'FANTASY_ACCOUNT_MODEL'].rsplit('.', 1)
+    account_module_name, account_manager_name = app.config[
+        'FANTASY_ACCOUNT_MANAGER'].rsplit('.', 1)
 
     account_module = importlib.import_module(account_module_name)
-    account_class = getattr(account_module, account_class_name)
+    account_manger_class = getattr(account_module, account_manager_name)
 
-    role_module_name, role_class_name = app.config[
-        'FANTASY_ROLE_MODEL'].rsplit('.', 1)
-    role_module = importlib.import_module(role_module_name)
-    role_class = getattr(role_module, role_class_name)
-
-    r = True if app.config[
-                    'FANTASY_ACCOUNT_SECURITY_MODE'] != 'no' else False
-
-    Security(app,
-             SQLAlchemyUserDatastore(
-                 app.db, account_class, role_class),
-             register_blueprint=r)
+    app.account_manager = account_manger_class()
     pass
 
 
@@ -223,6 +208,11 @@ def create_app(app_name, config={}):
             pass
         pass
 
+    if app.db:
+        if app.config['FANTASY_AUTO_MIGRATE'] == 'yes':
+            smart_database(app)
+        app.db.init_app(app)
+
     track_info('(04/14)confirm cors ,i18n & celery...')
     if app.config['FANTASY_ACTIVE_CORS'] == 'yes':
         from flask_cors import CORS
@@ -259,8 +249,11 @@ def create_app(app_name, config={}):
 
         track_info('(08/14)confirm cache...')
         if app.config['FANTASY_ACTIVE_CACHE'] == 'yes':
-            from flask_caching import Cache
-            app.cache = Cache(app, config=app.config)
+            redis_kwargs = {k.lower().replace('redis_', ''): v for (k, v) in
+                            app.config.items() if
+                            k.upper().startswith('REDIS_')}
+            import redis
+            app.cache = redis.Redis(**redis_kwargs)
             pass
 
         track_info('(09/14)active app...')
@@ -283,17 +276,12 @@ def create_app(app_name, config={}):
 
         if app.db:
             track_info('(10/14)trigger auto migrate...')
-
-            smart_database(app)
             smart_migrate(app)
-            smart_account(app)
-            app.db.init_app(app)
+            pass
 
-            # disable, may cause another problem
-            # @app.teardown_request
-            # def session_clear(exception=None):
-            #     if exception and app.db.session.is_active:
-            #         app.db.session.remove()
+        if app.config['FANTASY_ACTIVE_ACCOUNT'] == 'yes' and \
+                app.config['FANTASY_ACCOUNT_MANAGER']:
+            smart_account(app)
             pass
 
         track_info('(11/14)bind error handle...')

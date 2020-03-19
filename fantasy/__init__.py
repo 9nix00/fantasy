@@ -50,7 +50,7 @@ for k, v in requirement_env_dict.items():
 optional_env_list = [
     'FANTASY_ADMIN_NAME',  # admin
     'FANTASY_ADMIN_TEMPLATE_MODE',  # bootstrap3
-
+    'FANTASY_ACCOUNT_MANAGER'
 ]
 
 global_env_list = [
@@ -88,7 +88,9 @@ def show_env(p=print):
     p(['CACHE_TYPE', 'CACHE_REDIS_URL'])
 
     p('user feature:')
-    p(['ACCOUNT_USERNAME_DISABLE_REGISTER', 'SECURITY_PASSWORD_SALT',
+    p(['ACCOUNT_TOKEN_SALT',
+       'ACCOUNT_USERNAME_DISABLE_REGISTER',
+       'ACCOUNT_TOKEN_TTL',
        'SECRET_KEY'])
 
     p('cors feature:')
