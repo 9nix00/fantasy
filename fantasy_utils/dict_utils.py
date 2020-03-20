@@ -30,5 +30,6 @@ class objectview(object):
 
 
 class jsonview(object):
+    """Halt in pypy3"""
     def __init__(self, d):
         self.__dict__ = json.loads(d)
