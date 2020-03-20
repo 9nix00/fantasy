@@ -25,9 +25,12 @@ requirement_env_dict = {
     'FANTASY_ACTIVE_DB': 'no',
     'FANTASY_ACTIVE_CELERY': 'no',
     'FANTASY_ACTIVE_CACHE': 'yes',
+    'FANTASY_ACTIVE_DOC_DB': 'no',
     'FANTASY_ACTIVE_EXPORTER': 'yes',
     'FANTASY_ACTIVE_SENTRY': 'yes',
     'FANTASY_ACTIVE_ACCOUNT': 'yes',
+    'FANTASY_ACTIVE_ADMIN': 'no',
+    'FANTASY_ACTIVE_CLI': 'yes',
     'FANTASY_ACTIVE_I18N': 'yes',
     'FANTASY_ACTIVE_CORS': 'no',
     'FANTASY_APPLICATION_ROOT': '/',
@@ -50,7 +53,8 @@ for k, v in requirement_env_dict.items():
 optional_env_list = [
     'FANTASY_ADMIN_NAME',  # admin
     'FANTASY_ADMIN_TEMPLATE_MODE',  # bootstrap3
-    'FANTASY_ACCOUNT_MANAGER'
+    'FANTASY_ACCOUNT_MANAGER',
+    'FANTASY_ADMIN_NAME'
 ]
 
 global_env_list = [

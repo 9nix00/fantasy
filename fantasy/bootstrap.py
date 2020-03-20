@@ -66,6 +66,7 @@ class FantasyFlask(Flask):
     db = _db
     account_manager = None
     root_app = None
+    doc_db = None
 
     @property
     def is_root_app(self):
@@ -254,13 +255,22 @@ def create_app(app_name, config={}):
 
             pass
 
-        track_info('(08/14)confirm cache...')
+        track_info('(08/14)confirm cache & doc_db...')
         if app.config['FANTASY_ACTIVE_CACHE'] == 'yes':
             redis_kwargs = {k.lower().replace('redis_', ''): v for (k, v) in
                             app.config.items() if
                             k.upper().startswith('REDIS_')}
             import redis
             app.cache = redis.Redis(**redis_kwargs)
+            pass
+
+        if app.config['FANTASY_ACTIVE_DOC_DB'] == 'yes':
+            mongodb_kwargs = {k.lower().replace('mongodb_', ''): v for (k, v)
+                              in
+                              app.config.items() if
+                              k.upper().startswith('MONGODB_')}
+            import mongoengine
+            app.doc_db = mongoengine.connect(**mongodb_kwargs)
             pass
 
         track_info('(09/14)active app...')
@@ -311,7 +321,8 @@ def create_app(app_name, config={}):
             pass
 
         track_info('(12/14)bind admin handle...')
-        if hasattr(mod, 'run_admin'):
+        if app.config['FANTASY_ACTIVE_ADMIN'] == 'yes' \
+                and hasattr(mod, 'run_admin'):
             import flask_admin
 
             try:
@@ -329,18 +340,18 @@ def create_app(app_name, config={}):
                                       template_mode=admin_tpl_name)
 
             run_admin = getattr(mod, 'run_admin')
-            run_admin(admin)
+            run_admin(admin, app)
             admin.init_app(app)
             pass
 
         pass
 
     track_info('(13/14)bind ff command...')
-    if app.is_root_app:
+    if app.config['FANTASY_ACTIVE_CLI'] == 'yes' and app.is_root_app:
         app.cli.add_command(cli.ff)
 
     track_info('(14/14)bind cli command...')
-    if hasattr(mod, 'run_cli'):
+    if app.config['FANTASY_ACTIVE_CLI'] == 'yes' and hasattr(mod, 'run_cli'):
         run_cli = getattr(mod, 'run_cli')
         run_cli(app)
         pass
