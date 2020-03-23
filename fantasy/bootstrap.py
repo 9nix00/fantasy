@@ -67,6 +67,7 @@ class FantasyFlask(Flask):
     account_manager = None
     root_app = None
     doc_db = None
+    storage = None
 
     @property
     def is_root_app(self):
@@ -235,6 +236,15 @@ def create_app(app_name, config={}):
     if app.config['FANTASY_ACTIVE_CELERY'] == 'yes':
         from .celery import Celery
         connect_celery(app, Celery())
+        pass
+
+    if app.config['FANTASY_STORAGE_MODULE']:
+        st_module_name, st_class_name = app.config[
+            'FANTASY_STORAGE_MODULE'].rsplit('.', 1)
+
+        st_module = importlib.import_module(st_module_name)
+        st_class = getattr(st_module, st_class_name)
+        app.storage = st_class(app)
         pass
 
     track_info('(05/14)bind app context...')

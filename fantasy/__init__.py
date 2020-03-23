@@ -44,6 +44,7 @@ requirement_env_dict = {
     'CELERY_APP_NAME': 'fantasy',
     'SQLALCHEMY_TRACK_MODIFICATIONS': 'True',
     'FANTASY_TASKS_PATH': '',
+    'FANTASY_STORAGE_MODULE': ''
 }
 
 for k, v in requirement_env_dict.items():
