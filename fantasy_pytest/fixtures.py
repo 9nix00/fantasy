@@ -71,6 +71,16 @@ def app(active_module):
         from sqlalchemy_utils import drop_database
         drop_database(make_url(pytest.app_config['SQLALCHEMY_DATABASE_URI']))
 
+
+    if pytest.keep_database is False \
+            and pytest.app_config['FANTASY_ACTIVE_DOC_DB'] == 'yes':
+        mongodb_kwargs = {k.lower().replace('mongodb_', ''): v for (k, v)
+                          in
+                          pytest.app_config.items() if
+                          k.upper().startswith('MONGODB_')}
+        import mongoengine
+        db = mongoengine.connect(**mongodb_kwargs)
+        db.drop_database(pytest.app_config['MONGODB_DB'])
     pass
 
 

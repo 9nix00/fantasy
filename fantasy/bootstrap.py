@@ -275,12 +275,12 @@ def create_app(app_name, config={}):
             pass
 
         if app.config['FANTASY_ACTIVE_DOC_DB'] == 'yes':
-            mongodb_kwargs = {k.lower().replace('mongodb_', ''): v for (k, v)
+            mongodb_kwargs = {k.upper(): v for (k, v)
                               in
                               app.config.items() if
                               k.upper().startswith('MONGODB_')}
-            import mongoengine
-            app.doc_db = mongoengine.connect(**mongodb_kwargs)
+            from flask_mongoengine import MongoEngine
+            app.doc_db = MongoEngine(app, config=mongodb_kwargs)
             pass
 
         track_info('(09/14)active app...')
