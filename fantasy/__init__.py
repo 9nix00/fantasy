@@ -60,6 +60,7 @@ optional_env_list = [
 
 global_env_list = [
     'FANTASY_ACTIVE_DB',
+    'FANTASY_ACTIVE_DOC_DB',
     'FANTASY_SETTINGS_MODULE',
     'FANTASY_APPLICATION_ROOT',
     'FANTASY_APP',

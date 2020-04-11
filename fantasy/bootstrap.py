@@ -18,6 +18,13 @@ if os.environ.get('FANTASY_ACTIVE_DB', 'no') == 'yes':
     _db = SQLAlchemy()
     pass
 
+_doc_db = None
+if os.environ.get('FANTASY_ACTIVE_DOC_DB', 'no') == 'yes':
+    from flask_mongoengine import MongoEngine
+
+    _doc_db = MongoEngine()
+    pass
+
 
 def connect_celery(app, celery):
     app.celery = celery
@@ -64,9 +71,9 @@ class FantasyFlask(Flask):
     cache = None
     celery = None
     db = _db
+    doc_db = _doc_db
     account_manager = None
     root_app = None
-    doc_db = None
     storage = None
 
     @property
@@ -222,6 +229,13 @@ def create_app(app_name, config={}):
             smart_database(app)
         app.db.init_app(app)
 
+    if app.doc_db:
+        mongodb_kwargs = {k.upper(): v for (k, v)
+                          in
+                          app.config.items() if
+                          k.upper().startswith('MONGODB_')}
+        app.doc_db.init_app(app, config=mongodb_kwargs)
+
     track_info('(04/14)confirm cors ,i18n & celery...')
     if app.config['FANTASY_ACTIVE_CORS'] == 'yes':
         from flask_cors import CORS
@@ -274,14 +288,15 @@ def create_app(app_name, config={}):
             app.cache = redis.Redis(**redis_kwargs)
             pass
 
-        if app.config['FANTASY_ACTIVE_DOC_DB'] == 'yes':
-            mongodb_kwargs = {k.upper(): v for (k, v)
-                              in
-                              app.config.items() if
-                              k.upper().startswith('MONGODB_')}
-            from flask_mongoengine import MongoEngine
-            app.doc_db = MongoEngine(app, config=mongodb_kwargs)
-            pass
+        # don't use this style, may cause a pymongo fork error
+        # if app.config['FANTASY_ACTIVE_DOC_DB'] == 'yes':
+        #     mongodb_kwargs = {k.upper(): v for (k, v)
+        #                       in
+        #                       app.config.items() if
+        #                       k.upper().startswith('MONGODB_')}
+        #     from flask_mongoengine import MongoEngine
+        #     app.doc_db = MongoEngine(app, config=mongodb_kwargs)
+        #     pass
 
         track_info('(09/14)active app...')
         if hasattr(mod, 'run_app'):
