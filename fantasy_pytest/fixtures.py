@@ -66,14 +66,14 @@ def app(active_module):
     yield app
 
     if pytest.keep_database is False \
-            and os.environ['FANTASY_ACTIVE_DB'] == 'yes':
+            and os.environ['FANTASY_ACTIVE_DB'] == 'yes' \
+            and pytest.app_config.get('FANTASY_AUTO_MIGRATE', 'no') == 'yes':
         from sqlalchemy.engine.url import make_url
         from sqlalchemy_utils import drop_database
         drop_database(make_url(pytest.app_config['SQLALCHEMY_DATABASE_URI']))
 
-
     if pytest.keep_database is False \
-            and pytest.app_config['FANTASY_ACTIVE_DOC_DB'] == 'yes':
+            and pytest.app_config.get('FANTASY_ACTIVE_DOC_DB', 'no') == 'yes':
         mongodb_kwargs = {k.lower().replace('mongodb_', ''): v for (k, v)
                           in
                           pytest.app_config.items() if
@@ -91,4 +91,3 @@ def mock_celery(client):
     celery_app.conf.update(CELERY_ALWAYS_EAGER=True)
     yield celery_app
     celery_app.control.purge()
-
