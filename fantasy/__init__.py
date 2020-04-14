@@ -42,7 +42,7 @@ requirement_env_dict = {
     'FANTASY_TRACK_MODE': 'no',
     'FANTASY_WORKSPACE': os.getcwd(),
     'CELERY_APP_NAME': 'fantasy',
-    'SQLALCHEMY_TRACK_MODIFICATIONS': 'True',
+    'SQLALCHEMY_TRACK_MODIFICATIONS': 'no',
     'FANTASY_TASKS_PATH': '',
     'FANTASY_STORAGE_MODULE': ''
 }
