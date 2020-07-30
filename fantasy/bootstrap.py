@@ -49,7 +49,7 @@ def router(app, sub_apps={}, prefix=None):
         sub_apps = {prefix + k.lstrip('/'): v for k, v in
                     sub_apps.items()}
 
-    if app.config['FANTASY_ACTIVE_EXPORTER'] == 'yes':
+    if app.config.get('FANTASY_ACTIVE_EXPORTER') == 'yes':
         from prometheus_client import make_wsgi_app
         embed_apps[prefix + 'metrics'] = make_wsgi_app()
 
