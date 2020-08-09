@@ -189,21 +189,21 @@ def create_app(app_name, config={}):
     :return:
     """
 
-    track_info('(00/14)fantasy track mode active...')
+    track_info('(00/08)fantasy track mode active...')
     from . import error_handler, cli
 
-    track_info('(01/14)i18n webargs...')
+    track_info('(01/08)i18n webargs...')
     if os.environ.get('LANG') == 'zh_CN.UTF-8':
         from .i18n import zh_cn
         zh_cn()
         pass
 
-    track_info('(02/14)initial app...')
+    track_info('(02/08)initial app...')
     mod = importlib.import_module(app_name)
     app = FantasyFlask(app_name, root_path=os.path.dirname(mod.__file__))
     app.root_app = os.environ.get('FANTASY_APP', app_name)
 
-    track_info('(03/14)update app.config...')
+    track_info('(03/08)update app.config...')
     if config:
         app.config.update(config)
 
@@ -224,11 +224,13 @@ def create_app(app_name, config={}):
             pass
         pass
 
+    track_info("       initial SQL database when active.")
     if app.db:
         if app.config['FANTASY_AUTO_MIGRATE'] == 'yes':
             smart_database(app)
         app.db.init_app(app)
 
+    track_info("       initial Doc database when active.")
     if app.doc_db:
         mongodb_kwargs = {k.upper(): v for (k, v)
                           in
@@ -236,69 +238,64 @@ def create_app(app_name, config={}):
                           k.upper().startswith('MONGODB_')}
         app.doc_db.init_app(app, config=mongodb_kwargs)
 
-    track_info('(04/14)confirm cors ,i18n & celery...')
+    track_info('(04/08)active more extensions...')
+    track_info("       try active CORS rule.")
     if app.config['FANTASY_ACTIVE_CORS'] == 'yes':
         from flask_cors import CORS
         CORS(app, **app.config.get('CORS_KWARGS', {}))
         pass
 
+    track_info("       try active i18n rule.")
     if app.config['FANTASY_ACTIVE_I18N'] == 'yes':
         from flask_babel import Babel
         Babel(app)
         pass
 
+    track_info("       try active celery rule.")
     if app.config['FANTASY_ACTIVE_CELERY'] == 'yes':
         from .celery import Celery
         connect_celery(app, Celery())
         pass
 
+    track_info("       try active oss storage.")
     if app.config['FANTASY_STORAGE_MODULE']:
         st_module_name, st_class_name = app.config[
             'FANTASY_STORAGE_MODULE'].rsplit('.', 1)
 
         st_module = importlib.import_module(st_module_name)
         st_class = getattr(st_module, st_class_name)
+
         app.storage = st_class(app)
         pass
 
-    track_info('(05/14)bind app context...')
+    track_info("       try active sentry.")
+    if app.config['FANTASY_ACTIVE_SENTRY'] == 'yes':
+        from raven.contrib.flask import Sentry
+        Sentry(app)
+        pass
+
+    track_info("       try active prometheus.")
+    if app.config['FANTASY_ACTIVE_EXPORTER'] == 'yes':
+        from prometheus_client import make_wsgi_app
+        from flask_prometheus_metrics import register_metrics
+        register_metrics(app, app_version='v' + version,
+                         app_config=app.config['ENV'])
+
+        pass
+
+    track_info("       try active cache.")
+    if app.config['FANTASY_ACTIVE_CACHE'] == 'yes':
+        redis_kwargs = {k.lower().replace('redis_', ''): v for (k, v) in
+                        app.config.items() if
+                        k.upper().startswith('REDIS_')}
+        import redis
+        app.cache = redis.Redis(**redis_kwargs)
+        pass
+
+    track_info('(05/08)active something with app context...')
     with app.app_context():
-        track_info('(06/14)confirm db handle... skip for now...')
 
-        track_info('(07/14)confirm sentry...')
-        if app.config['FANTASY_ACTIVE_SENTRY'] == 'yes':
-            from raven.contrib.flask import Sentry
-            Sentry(app)
-            pass
-
-        if app.config['FANTASY_ACTIVE_EXPORTER'] == 'yes':
-            from prometheus_client import make_wsgi_app
-            from flask_prometheus_metrics import register_metrics
-            register_metrics(app, app_version='v' + version,
-                             app_config=app.config['ENV'])
-
-            pass
-
-        track_info('(08/14)confirm cache & doc_db...')
-        if app.config['FANTASY_ACTIVE_CACHE'] == 'yes':
-            redis_kwargs = {k.lower().replace('redis_', ''): v for (k, v) in
-                            app.config.items() if
-                            k.upper().startswith('REDIS_')}
-            import redis
-            app.cache = redis.Redis(**redis_kwargs)
-            pass
-
-        # don't use this style, may cause a pymongo fork error
-        # if app.config['FANTASY_ACTIVE_DOC_DB'] == 'yes':
-        #     mongodb_kwargs = {k.upper(): v for (k, v)
-        #                       in
-        #                       app.config.items() if
-        #                       k.upper().startswith('MONGODB_')}
-        #     from flask_mongoengine import MongoEngine
-        #     app.doc_db = MongoEngine(app, config=mongodb_kwargs)
-        #     pass
-
-        track_info('(09/14)active app...')
+        track_info("       bind sentry trigger handler.")
         if hasattr(mod, 'run_app'):
             run_app = getattr(mod, 'run_app')
 
@@ -316,17 +313,20 @@ def create_app(app_name, config={}):
 
             pass
 
+        track_info("       bind auto migrate.")
         if app.db and app.is_root_app:
-            track_info('(10/14)trigger auto migrate...')
+            track_info(f"              match root-app flag at: {app.name}, "
+                       f"will try execute smart migrate.")
             smart_migrate(app)
             pass
 
+        track_info("       try bind account manager.")
         if app.config['FANTASY_ACTIVE_ACCOUNT'] == 'yes' and \
                 app.config['FANTASY_ACCOUNT_MANAGER']:
             smart_account(app)
             pass
 
-        track_info('(11/14)bind error handle...')
+        track_info('(06/08)bind error handle...')
 
         @app.errorhandler(400)
         def h_400(error):
@@ -345,7 +345,7 @@ def create_app(app_name, config={}):
             error_handle(app)
             pass
 
-        track_info('(12/14)bind admin handle...')
+        track_info('(07/08){unstable}bind admin handle...')
         if app.config['FANTASY_ACTIVE_ADMIN'] == 'yes' \
                 and hasattr(mod, 'run_admin'):
             import flask_admin
@@ -371,12 +371,17 @@ def create_app(app_name, config={}):
 
         pass
 
-    track_info('(13/14)bind ff command...')
+    track_info('(08/08)bind CLI command...')
+    track_info("       try bind ff command.")
     if app.config['FANTASY_ACTIVE_CLI'] == 'yes' and app.is_root_app:
+        track_info(f"              match root-app flag at: {app.name}, "
+                   f"will add ff command.")
         app.cli.add_command(cli.ff)
 
-    track_info('(14/14)bind cli command...')
+    track_info("       try bind custom command.")
     if app.config['FANTASY_ACTIVE_CLI'] == 'yes' and hasattr(mod, 'run_cli'):
+        track_info(f"              found custom command at: {app.name}, "
+                   f"will add custom command.")
         run_cli = getattr(mod, 'run_cli')
         run_cli(app)
         pass
