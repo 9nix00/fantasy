@@ -2,7 +2,7 @@ from os import path
 
 from setuptools import find_packages, setup
 
-version = "0.4.0"
+version = "0.4.1"
 
 this_directory = path.abspath(path.dirname(__file__))
 
@@ -20,7 +20,7 @@ setup(
     version=version,
     packages=find_packages(exclude=["tests"]),
     url='https://github.com/9nix00/fantasy',
-    download_url='https://github.com/9nix00/fantasy/archive/v0.4.0.tar.gz',
+    download_url='https://github.com/9nix00/fantasy/archive/v0.4.1.tar.gz',
     license='MIT',
     author='WANG WENPEI',
     entry_points={"pytest11": ["pytest_fantasy = fantasy_pytest.fixtures"]},
