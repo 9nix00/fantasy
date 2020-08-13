@@ -276,7 +276,6 @@ def create_app(app_name, config={}):
 
     track_info("       try active prometheus.")
     if app.config['FANTASY_ACTIVE_EXPORTER'] == 'yes':
-        from prometheus_client import make_wsgi_app
         from flask_prometheus_metrics import register_metrics
         register_metrics(app, app_version='v' + version,
                          app_config=app.config['ENV'])
