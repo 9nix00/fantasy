@@ -145,7 +145,8 @@ def init_logging(logging_level):
         }},
         'handlers': {'console': {
             'class': 'logging.StreamHandler',
-            'stream': 'ext://flask.logging.wsgi_errors_stream',
+            # 'stream': 'ext://flask.logging.wsgi_errors_stream',
+            'stream': 'ext://sys.stdout',
             'formatter': 'default'
         }},
         'root': {
