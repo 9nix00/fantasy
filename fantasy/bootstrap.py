@@ -133,36 +133,26 @@ def smart_account(app):
     pass
 
 
-def smart_logging():
-    """
-    ..deprecated::
-
-        弃用，应该通过类似run_app注入的方式来完成
-
-    :return:
-    """
+def init_logging(logging_level=None):
     import sys
     from logging.config import dictConfig
 
     dictConfig({
         'version': 1,
         'formatters': {'default': {
-            'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+            'format': '[%(asctime)s] {%(module)s} %(levelname)s: %(message)s',
         }},
         'handlers': {'console': {
             'class': 'logging.StreamHandler',
-            'stream': sys.stdout,
+            'stream': 'ext://flask.logging.wsgi_errors_stream',
             'formatter': 'default'
         }},
         'root': {
-            'level': 'INFO',
+            'level': logging_level if logging_level else 'ERROR',
             'handlers': ['console']
         },
-        'shopping': {
-            'level': 'DEBUG',
-            'handlers': ['console']
-        }
     })
+
     pass
 
 
@@ -191,6 +181,10 @@ def create_app(app_name, config={}):
 
     track_info('(00/08)fantasy track mode active...')
     from . import error_handler, cli
+    logging_level = 'INFO' if os.environ.get('FLASK_ENV',
+                                             'dev') == 'dev' else 'ERROR'
+    logging_level = 'DEBUG' if os.environ.get('FLASK_DEBUG') else logging_level
+    init_logging(logging_level)
 
     track_info('(01/08)i18n webargs...')
     if os.environ.get('LANG') == 'zh_CN.UTF-8':
@@ -202,6 +196,7 @@ def create_app(app_name, config={}):
     mod = importlib.import_module(app_name)
     app = FantasyFlask(app_name, root_path=os.path.dirname(mod.__file__))
     app.root_app = os.environ.get('FANTASY_APP', app_name)
+    app.logger.info("logger active")
 
     track_info('(03/08)update app.config...')
     if config:
