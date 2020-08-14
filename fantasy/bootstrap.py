@@ -136,6 +136,7 @@ def smart_account(app):
 
 
 def init_logging(logging_level):
+    return
     from logging.config import dictConfig
 
     dictConfig({
