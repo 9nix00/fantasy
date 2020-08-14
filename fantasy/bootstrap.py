@@ -135,8 +135,7 @@ def smart_account(app):
     pass
 
 
-def init_logging(logging_level=None):
-    import sys
+def init_logging(logging_level):
     from logging.config import dictConfig
 
     dictConfig({
@@ -150,7 +149,7 @@ def init_logging(logging_level=None):
             'formatter': 'default'
         }},
         'root': {
-            'level': logging_level if logging_level else 'ERROR',
+            'level': logging_level,
             'handlers': ['console']
         },
     })
@@ -193,6 +192,8 @@ def create_app(app_name, config={}):
     logging_level = 'INFO' if os.environ.get('FLASK_ENV',
                                              'dev') == 'dev' else 'ERROR'
     logging_level = 'DEBUG' if os.environ.get('FLASK_DEBUG') else logging_level
+
+    track_info(f'        logging mode:{logging_level}')
     init_logging(logging_level)
 
     track_info('(01/08)i18n webargs...')
