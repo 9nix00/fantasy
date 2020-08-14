@@ -277,8 +277,14 @@ def create_app(app_name, config={}):
 
     track_info("       try active sentry.")
     if app.config['FANTASY_ACTIVE_SENTRY'] == 'yes':
-        from raven.contrib.flask import Sentry
-        Sentry(app)
+        try:
+            import sentry_sdk
+            from sentry_sdk.integrations.flask import FlaskIntegration
+            sentry_sdk.init(os.environ['SENTRY_DSN'],
+                            integrations=[FlaskIntegration()])
+        except Exception:
+            from raven.contrib.flask import Sentry
+            Sentry(app)
         pass
 
     track_info("       try active prometheus.")
