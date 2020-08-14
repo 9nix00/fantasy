@@ -8,6 +8,8 @@ import importlib
 import os
 
 from flask import Flask
+from flask._compat import reraise
+import functools
 
 from . import config_env_list, version
 
@@ -156,6 +158,13 @@ def init_logging(logging_level=None):
     pass
 
 
+def ff_log_exception(exc_info, original_log_exception=None):
+    original_log_exception(exc_info)
+    exc_type, exc, tb = exc_info
+    # re-raise for werkzeug
+    reraise(exc_type, exc, tb)
+
+
 def track_info(msg):
     track_mode = os.environ['FANTASY_TRACK_MODE'] == 'yes'
     if track_mode:
@@ -202,6 +211,9 @@ def create_app(app_name, config={}):
     if config:
         app.config.update(config)
 
+    app.config.update(PROPAGATE_EXCEPTIONS=False)
+    app.log_exception = functools.partial(ff_log_exception,
+                                          original_log_exception=app.log_exception)
     # 由外部做显式声明，否则不做调用
     config_module = os.environ.get('FANTASY_SETTINGS_MODULE', None)
     if config_module:
