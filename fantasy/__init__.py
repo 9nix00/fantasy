@@ -15,7 +15,7 @@ python -m fantasy_kickstart init project-1
 
 import os
 
-version = "0.4.1"
+version = "0.4.2"
 version_info = version.split('.')
 
 # active database
