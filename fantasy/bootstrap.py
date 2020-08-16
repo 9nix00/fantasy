@@ -8,6 +8,8 @@ import importlib
 import os
 
 from flask import Flask
+from flask._compat import reraise
+import functools
 
 from . import config_env_list, version
 
@@ -133,37 +135,34 @@ def smart_account(app):
     pass
 
 
-def smart_logging():
-    """
-    ..deprecated::
-
-        弃用，应该通过类似run_app注入的方式来完成
-
-    :return:
-    """
-    import sys
+def init_logging(logging_level):
     from logging.config import dictConfig
 
     dictConfig({
         'version': 1,
         'formatters': {'default': {
-            'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+            'format': '[%(asctime)s] {%(module)s} %(levelname)s: %(message)s',
         }},
         'handlers': {'console': {
             'class': 'logging.StreamHandler',
-            'stream': sys.stdout,
+            # 'stream': 'ext://flask.logging.wsgi_errors_stream',
+            'stream': 'ext://sys.stdout',
             'formatter': 'default'
         }},
         'root': {
-            'level': 'INFO',
+            'level': logging_level,
             'handlers': ['console']
         },
-        'shopping': {
-            'level': 'DEBUG',
-            'handlers': ['console']
-        }
     })
+
     pass
+
+
+def ff_log_exception(exc_info, original_log_exception=None):
+    original_log_exception(exc_info)
+    exc_type, exc, tb = exc_info
+    # re-raise for werkzeug
+    reraise(exc_type, exc, tb)
 
 
 def track_info(msg):
@@ -191,6 +190,13 @@ def create_app(app_name, config={}):
 
     track_info('(00/08)fantasy track mode active...')
     from . import error_handler, cli
+    logging_level = 'INFO' if os.environ.get('FLASK_ENV',
+                                             'dev') == 'dev' else 'ERROR'
+    logging_level = 'DEBUG' if os.environ.get('FLASK_DEBUG') else logging_level
+
+    if os.environ.get('FANTASY_ACTIVE_LOGGING', 'no') == 'yes':
+        track_info(f'        logging mode:{logging_level}')
+        init_logging(logging_level)
 
     track_info('(01/08)i18n webargs...')
     if os.environ.get('LANG') == 'zh_CN.UTF-8':
@@ -202,11 +208,15 @@ def create_app(app_name, config={}):
     mod = importlib.import_module(app_name)
     app = FantasyFlask(app_name, root_path=os.path.dirname(mod.__file__))
     app.root_app = os.environ.get('FANTASY_APP', app_name)
+    app.logger.info("logger active")
 
     track_info('(03/08)update app.config...')
     if config:
         app.config.update(config)
 
+    app.config.update(PROPAGATE_EXCEPTIONS=False)
+    app.log_exception = functools.partial(ff_log_exception,
+                                          original_log_exception=app.log_exception)
     # 由外部做显式声明，否则不做调用
     config_module = os.environ.get('FANTASY_SETTINGS_MODULE', None)
     if config_module:
@@ -270,8 +280,14 @@ def create_app(app_name, config={}):
 
     track_info("       try active sentry.")
     if app.config['FANTASY_ACTIVE_SENTRY'] == 'yes':
-        from raven.contrib.flask import Sentry
-        Sentry(app)
+        try:
+            import sentry_sdk
+            from sentry_sdk.integrations.flask import FlaskIntegration
+            sentry_sdk.init(os.environ['SENTRY_DSN'],
+                            integrations=[FlaskIntegration()])
+        except Exception:
+            from raven.contrib.flask import Sentry
+            Sentry(app)
         pass
 
     track_info("       try active prometheus.")
