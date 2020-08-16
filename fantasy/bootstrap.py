@@ -153,8 +153,11 @@ def init_logging(logging_level):
             'level': logging_level,
             'handlers': ['console']
         },
+        'shopping': {
+            'level': 'DEBUG',
+            'handlers': ['console']
+        }
     })
-
     pass
 
 
