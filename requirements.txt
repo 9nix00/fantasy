@@ -18,7 +18,7 @@ flask-prometheus-metrics==1.0.0
 # flask_mongoengine==0.9.5
 flask-migrate==2.5.2
 Flask-Admin==1.5.5
-flask-cors==3.0.8
+flask-cors==3.0.9
 flask-babel==1.0.0
 SQLAlchemy-Utils==0.36.1
 
